@@ -20,7 +20,7 @@ export default function ProcessSteps() {
         </h2>
       </div>
 
-      {/* Timeline line — desktop horizontal, mobile vertical */}
+      {/* Timeline */}
       <div className="relative">
         {/* Desktop horizontal line */}
         <div className="absolute left-0 right-0 top-[3.25rem] hidden h-px bg-gradient-to-r from-transparent via-sport/40 to-transparent lg:block" />
@@ -36,29 +36,45 @@ export default function ProcessSteps() {
               viewport={{ once: true, margin: "-60px" }}
               transition={{ delay: index * 0.12, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
               whileHover={{ y: -8, scale: 1.015 }}
-              className="group relative rounded-2xl border border-white/10 bg-white/[0.035] p-6 pl-16 shadow-soft backdrop-blur-xl transition duration-300 hover:border-sport/50 hover:shadow-glow lg:pl-6 lg:pt-20"
+              className="process-card group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.035] p-6 pl-20 shadow-soft backdrop-blur-xl transition duration-300 hover:border-sport/50 hover:shadow-glow lg:pl-6 lg:pt-20"
             >
+              {/* Racing stripe accent */}
+              <div className="absolute bottom-0 left-0 top-0 w-1 bg-gradient-to-b from-sport/60 via-sport/20 to-transparent transition-all duration-300 group-hover:w-1.5 group-hover:from-sport group-hover:via-sport/40 lg:bottom-auto lg:left-0 lg:right-0 lg:top-auto lg:h-1 lg:w-full lg:bg-gradient-to-r lg:group-hover:h-1.5" />
+
+              {/* Checkered flag pattern — subtle background */}
+              <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 opacity-[0.03] transition-opacity duration-300 group-hover:opacity-[0.07]"
+                style={{
+                  backgroundImage: `repeating-conic-gradient(#fff 0% 25%, transparent 0% 50%)`,
+                  backgroundSize: "12px 12px",
+                }}
+              />
+
               {/* Step number — on the timeline */}
-              <div className="absolute -left-[0.1rem] top-6 z-10 lg:left-1/2 lg:top-0 lg:-translate-x-1/2 lg:-translate-y-1/2">
+              <div className="absolute left-2 top-6 z-10 lg:left-1/2 lg:top-0 lg:-translate-x-1/2 lg:-translate-y-1/2">
                 <div className="grid h-14 w-14 place-items-center rounded-full border-2 border-sport/40 bg-ink text-sport shadow-glow transition duration-300 group-hover:border-sport group-hover:bg-sport group-hover:text-white">
                   <span className="text-lg font-black">{num}</span>
                 </div>
               </div>
 
-              {/* Icon */}
+              {/* Icon — separated from title with proper spacing */}
               <div className="mb-4 hidden lg:block">
-                <div className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[0.05] text-sport transition group-hover:border-sport/30">
+                <div className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[0.05] text-sport transition group-hover:border-sport/30 group-hover:bg-sport/10">
                   <Icon className="h-5 w-5" />
                 </div>
               </div>
 
-              {/* Mobile icon — inline with step number */}
-              <div className="absolute left-16 top-[1.55rem] lg:hidden">
-                <Icon className="h-5 w-5 text-sport" />
+              {/* Mobile icon — inside the card, well-spaced */}
+              <div className="mb-3 lg:hidden">
+                <div className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/[0.05] text-sport">
+                  <Icon className="h-4 w-4" />
+                </div>
               </div>
 
-              <h3 className="mt-2 text-xl font-black text-white lg:mt-0">{title}</h3>
+              <h3 className="text-xl font-black text-white">{title}</h3>
               <p className="mt-3 text-sm leading-7 text-white/[0.58]">{text}</p>
+
+              {/* Shine sweep effect on hover */}
+              <div className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/[0.04] to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full" />
             </motion.article>
           ))}
         </div>

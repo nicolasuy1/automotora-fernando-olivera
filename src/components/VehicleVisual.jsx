@@ -18,7 +18,7 @@ const positionMap = {
   moto: "object-[72%_center]",
 };
 
-export default function VehicleVisual({ type = "compact", name, note, image = showroomImage, imageAlt, className = "" }) {
+export default function VehicleVisual({ type = "compact", name, note, image = showroomImage, imageAlt, className = "", hideOverlay = false }) {
   return (
     <div className={`relative overflow-hidden bg-carbon ${className}`}>
       <motion.img
@@ -40,10 +40,13 @@ export default function VehicleVisual({ type = "compact", name, note, image = sh
       <div className="absolute left-4 top-4 rounded-full border border-white/10 bg-black/40 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-champagne backdrop-blur-xl">
         {labelMap[type] || "Vehículo"}
       </div>
-      <div className="absolute bottom-4 left-4 right-4">
-        <p className="max-w-xs text-2xl font-black leading-tight text-white">{name}</p>
-        {note ? <p className="mt-2 line-clamp-2 text-xs font-semibold uppercase tracking-[0.14em] text-white/[0.52]">{note}</p> : null}
-      </div>
+      {/* Only render text overlay when NOT used inside a card */}
+      {!hideOverlay && (
+        <div className="absolute bottom-4 left-4 right-4">
+          <p className="max-w-xs text-2xl font-black leading-tight text-white">{name}</p>
+          {note ? <p className="mt-2 line-clamp-2 text-xs font-semibold uppercase tracking-[0.14em] text-white/[0.52]">{note}</p> : null}
+        </div>
+      )}
     </div>
   );
 }

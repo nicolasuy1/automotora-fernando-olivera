@@ -39,6 +39,7 @@ export default function VehicleCard({ vehicle }) {
               imageAlt={vehicle.imageAlt}
               note="Consultá disponibilidad y fotos por WhatsApp."
               className="h-full"
+              hideOverlay
             />
           </motion.div>
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/[0.14] to-transparent opacity-95" />

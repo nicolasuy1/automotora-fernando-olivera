@@ -171,7 +171,7 @@ export default function Hero() {
             transition={{ delay: 0.28, duration: 0.68, ease: [0.16, 1, 0.3, 1] }}
             className="mt-8 grid gap-3 sm:flex"
           >
-            <Button href="/catalogo" icon={ArrowRight}>Ver catálogo</Button>
+            <Button href="/catalogo" icon={ArrowRight} className="cta-pulse">Ver catálogo</Button>
             <Button href={whatsappHref()} variant="secondary" icon={MessageCircle}>
               Hablar por WhatsApp
             </Button>

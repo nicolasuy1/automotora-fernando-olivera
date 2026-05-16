@@ -1,11 +1,12 @@
-import { CalendarCheck, MapPin, MessageCircle, WalletCards } from "lucide-react";
+import { CalendarCheck, Clock, MapPin, MessageCircle, WalletCards } from "lucide-react";
 import Button from "./Button.jsx";
 import SectionReveal from "./SectionReveal.jsx";
 import { whatsappHref } from "../lib/whatsapp.js";
 
 export default function LocalPresence() {
   const items = [
-    { icon: MapPin, title: "Ubicación", text: "Ciudad del Plata, San José" },
+    { icon: MapPin, title: "Ubicación", text: "Ruta 1 km 24, Ciudad del Plata, San José" },
+    { icon: Clock, title: "Horario de atención", text: "Lun a Vie: 09:00 – 19:00 · Sáb: 09:00 – 14:00" },
     { icon: MessageCircle, title: "WhatsApp directo", text: "Consultá disponibilidad y recibí respuesta personalizada." },
     { icon: CalendarCheck, title: "Coordinación de visita", text: "Agendá para ver la unidad y resolver dudas en persona." },
     { icon: WalletCards, title: "Financiación y permuta", text: "Te asesoramos según tu entrega y situación." },
@@ -26,7 +27,7 @@ export default function LocalPresence() {
               Consultá disponibilidad, financiación o permuta y coordiná una visita por WhatsApp.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button href={whatsappHref()} icon={MessageCircle}>Hablar por WhatsApp</Button>
+              <Button href={whatsappHref()} icon={MessageCircle} className="cta-pulse">Hablar por WhatsApp</Button>
               <Button href="/contacto" variant="secondary" icon={CalendarCheck}>Coordinar visita</Button>
             </div>
           </div>
@@ -34,7 +35,9 @@ export default function LocalPresence() {
             {items.map(({ icon: Icon, title, text }) => (
               <div key={title} className="rounded-2xl border border-white/10 bg-black/35 p-5 backdrop-blur-xl transition hover:border-sport/45 hover:bg-black/45">
                 <div className="mb-3 flex items-center gap-3">
-                  <Icon className="h-5 w-5 text-sport" />
+                  <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-white/10 bg-white/[0.05]">
+                    <Icon className="h-4 w-4 text-sport" />
+                  </div>
                   <h3 className="font-black text-white">{title}</h3>
                 </div>
                 <p className="text-sm leading-6 text-white/[0.62]">{text}</p>
