@@ -123,10 +123,10 @@ export default function AdminVehicleList({ onEdit, onRefresh }) {
         {filteredVehicles.map((vehicle) => (
           <div 
             key={vehicle.id}
-            className="group relative flex flex-col sm:flex-row sm:items-center gap-5 rounded-3xl border border-white/10 bg-white/[0.02] p-4 transition-all hover:bg-white/[0.04] hover:border-white/20"
+            className="group relative flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5 rounded-3xl border border-white/10 bg-white/[0.02] p-4 transition-all hover:bg-white/[0.04] hover:border-white/20"
           >
-            {/* Thumbnail */}
-            <div className="h-24 w-full sm:w-36 shrink-0 overflow-hidden rounded-2xl bg-carbon">
+            {/* Thumbnail - Much larger on mobile to identify the car */}
+            <div className="h-48 w-full sm:h-24 sm:w-36 shrink-0 overflow-hidden rounded-2xl bg-carbon">
               <img 
                 src={vehicle.main_image_url || "/images/backgrounds/showroom-premium.jpeg"} 
                 alt={vehicle.title}
@@ -136,23 +136,27 @@ export default function AdminVehicleList({ onEdit, onRefresh }) {
 
             {/* Info */}
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <h3 className="truncate text-lg font-black text-white uppercase tracking-tight">{vehicle.title}</h3>
-                {vehicle.featured && <Star className="h-4 w-4 text-champagne fill-champagne" />}
+              <div className="flex items-start justify-between gap-2 mb-2 sm:mb-1">
+                <h3 className="text-xl sm:text-lg font-black text-white uppercase tracking-tight leading-tight sm:truncate">
+                  {vehicle.title}
+                </h3>
+                {vehicle.featured && <Star className="h-4 w-4 shrink-0 text-champagne fill-champagne" />}
               </div>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] font-bold uppercase tracking-widest text-white/30">
-                <span>{vehicle.year}</span>
-                <span>{vehicle.brand}</span>
-                <span>{vehicle.category}</span>
-                <span className="text-white/60">USD {vehicle.price_usd?.toLocaleString() || "---"}</span>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[10px] font-bold uppercase tracking-widest text-white/30">
+                <span className="bg-white/5 px-2 py-0.5 rounded-md">{vehicle.year}</span>
+                <span className="bg-white/5 px-2 py-0.5 rounded-md">{vehicle.brand}</span>
+                <span className="hidden sm:inline">{vehicle.category}</span>
+                <span className="text-white/60 font-black">USD {vehicle.price_usd?.toLocaleString() || "---"}</span>
               </div>
             </div>
 
             {/* Status */}
-            <StatusBadge status={vehicle.status} />
+            <div className="absolute top-6 right-6 sm:relative sm:top-0 sm:right-0">
+              <StatusBadge status={vehicle.status} />
+            </div>
 
             {/* Actions */}
-            <div className="flex items-center gap-2 border-t border-white/5 pt-4 sm:border-0 sm:pt-0">
+            <div className="flex flex-wrap items-center gap-2 border-t border-white/5 pt-4 sm:border-0 sm:pt-0">
               <ActionButton 
                 icon={Edit2} 
                 label="Editar" 
