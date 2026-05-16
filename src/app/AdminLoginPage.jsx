@@ -1,91 +1,122 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { LogIn, ShieldCheck, AlertCircle } from "lucide-react";
-import { authService } from "../services/authService";
+import { Lock, User, Loader2, ArrowRight } from "lucide-react";
+import { login } from "../services/authService";
 
 export default function AdminLoginPage({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
-    if (authService.login(email, password)) {
-      onLogin();
-    } else {
-      setError(true);
-      setTimeout(() => setError(false), 3000);
+    setLoading(true);
+    setError("");
+
+    try {
+      const success = await login(email, password);
+      if (success) {
+        onLogin();
+      } else {
+        setError("Credenciales incorrectas. Verificá los datos.");
+      }
+    } catch (err) {
+      setError("Error de conexión. Intentá de nuevo.");
+    } finally {
+      setLoading(false);
     }
-  };
+  }
 
   return (
-    <div className="relative min-h-screen grid place-items-center bg-black px-5 overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-sport/20 blur-[120px] rounded-full pointer-events-none" />
-      <div className="speed-lines absolute inset-0 opacity-10 pointer-events-none" />
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black px-5">
+      {/* Background Video */}
+      <div className="absolute inset-0 z-0">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="h-full w-full object-cover opacity-30 brightness-50"
+        >
+          <source
+            src="https://res.cloudinary.com/dvbkp3ml7/video/upload/v1778863564/0515_duxkkk.mov"
+            type="video/mp4"
+          />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+      </div>
 
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative w-full max-w-md z-10"
-      >
-        <div className="text-center mb-8">
-          <div className="inline-flex h-16 w-16 items-center justify-center rounded-full border border-sport/30 bg-sport/10 text-sport mb-4">
-            <ShieldCheck className="h-8 w-8" />
+      <div className="relative z-10 w-full max-w-md">
+        {/* Logo and Header */}
+        <div className="mb-10 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-sport shadow-glow">
+            <img src="/logo-fo.png" alt="Logo FO" className="h-10 w-10 object-contain brightness-0 invert" />
           </div>
           <h1 className="text-3xl font-black text-white uppercase tracking-tighter">Panel de Gestión</h1>
-          <p className="text-white/40 text-sm mt-2 uppercase tracking-widest">Fernando Olivera Vehículos</p>
+          <p className="mt-2 text-xs font-bold uppercase tracking-widest text-white/40">Acceso exclusivo para Fernando Olivera</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="premium-surface p-8 rounded-3xl border-white/10 space-y-6">
-          <div>
-            <label className="block text-[10px] font-black uppercase tracking-widest text-white/50 mb-2 px-1">Usuario</label>
-            <input 
-              type="email" 
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sport transition-colors"
-              placeholder="admin@fernandoolivera.com"
-            />
-          </div>
+        {/* Login Form */}
+        <div className="rounded-[2.5rem] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-2xl sm:p-10">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-white/30 px-2">Usuario</label>
+              <div className="relative">
+                <User className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/20" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="admin@fernandoolivera.com"
+                  className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-12 pr-4 text-sm text-white outline-none focus:border-sport/50 focus:ring-1 focus:ring-sport/20 transition-all"
+                  required
+                />
+              </div>
+            </div>
 
-          <div>
-            <label className="block text-[10px] font-black uppercase tracking-widest text-white/50 mb-2 px-1">Contraseña</label>
-            <input 
-              type="password" 
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sport transition-colors"
-              placeholder="••••••••"
-            />
-          </div>
+            <div className="space-y-2">
+              <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-white/30 px-2">Contraseña</label>
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/20" />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-12 pr-4 text-sm text-white outline-none focus:border-sport/50 focus:ring-1 focus:ring-sport/20 transition-all"
+                  required
+                />
+              </div>
+            </div>
 
-          {error && (
-            <motion.div 
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="flex items-center gap-2 text-sport bg-sport/10 p-3 rounded-xl border border-sport/20"
+            {error && (
+              <p className="text-center text-[10px] font-black uppercase tracking-widest text-sport">{error}</p>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-sport py-4 text-xs font-black uppercase tracking-widest text-white shadow-glow transition hover:brightness-110 disabled:opacity-50"
             >
-              <AlertCircle className="h-4 w-4" />
-              <span className="text-xs font-bold uppercase tracking-tight">Credenciales incorrectas</span>
-            </motion.div>
-          )}
+              {loading ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <>
+                  Entrar al sistema
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </>
+              )}
+            </button>
+          </form>
+        </div>
 
-          <button 
-            type="submit"
-            className="w-full premium-button bg-sport border-sport text-white py-4 rounded-xl font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-transform active:scale-95"
-          >
-            <LogIn className="h-5 w-5" />
-            Acceder al sistema
-          </button>
-        </form>
-
-        <p className="text-center mt-8 text-white/20 text-[10px] uppercase tracking-widest">
-          Acceso restringido · 2026
-        </p>
-      </motion.div>
+        {/* Footer info */}
+        <div className="mt-8 text-center">
+          <a href="/" className="text-[10px] font-black uppercase tracking-widest text-white/20 hover:text-white transition-colors">
+            ← Volver a la web pública
+          </a>
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,18 +1,22 @@
-const ADMIN_USER = "admin@fernandoolivera.com";
+const ADMIN_EMAIL = "admin@fernandoolivera.com";
 const ADMIN_PASS = "admin2026";
 
-export const authService = {
-  login: (email, password) => {
-    if (email === ADMIN_USER && password === ADMIN_PASS) {
-      localStorage.setItem("fo_admin_token", "fo_authorized_" + Date.now());
-      return true;
-    }
-    return false;
-  },
-  logout: () => {
-    localStorage.removeItem("fo_admin_token");
-  },
-  isAuthenticated: () => {
-    return !!localStorage.getItem("fo_admin_token");
+export function login(email, password) {
+  if (email === ADMIN_EMAIL && password === ADMIN_PASS) {
+    localStorage.setItem("fo_auth_token", "authorized_" + Date.now());
+    return true;
   }
-};
+  return false;
+}
+
+export function logout() {
+  localStorage.removeItem("fo_auth_token");
+}
+
+export function isAuthenticated() {
+  const token = localStorage.getItem("fo_auth_token");
+  if (!token) return false;
+  
+  // Basic check: token should start with "authorized_"
+  return token.startsWith("authorized_");
+}
