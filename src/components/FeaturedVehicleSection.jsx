@@ -28,11 +28,11 @@ export default function FeaturedVehicleSection() {
           <div>
             <p className="text-xs font-black uppercase tracking-[0.3em] text-champagne">Vehículos destacados</p>
             <h2 className="mt-4 max-w-4xl text-4xl font-black leading-[0.95] text-white sm:text-6xl">
-              Vehículos destacados para consultar hoy.
+              Unidades seleccionadas, listas para consultar.
             </h2>
           </div>
           <p className="max-w-xl text-base leading-7 text-white/[0.62] lg:justify-self-end">
-            Oportunidades seleccionadas con financiación, permuta y atención directa por WhatsApp.
+            Unidades con financiación disponible, opción de permuta y atención directa por WhatsApp.
           </p>
         </div>
 

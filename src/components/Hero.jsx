@@ -1,5 +1,5 @@
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { ArrowRight, MessageCircle, ShieldCheck } from "lucide-react";
+import { ArrowRight, MessageCircle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import Button from "./Button.jsx";
 import { whatsappHref } from "../lib/whatsapp.js";
@@ -43,7 +43,6 @@ export default function Hero() {
     const video = videoRef.current;
     if (!video) return;
 
-    // Forzar reproducción en caso de que autoplay sea bloqueado
     const playPromise = video.play();
     if (playPromise) {
       playPromise.catch(() => {
@@ -97,11 +96,10 @@ export default function Hero() {
             videoLoaded ? "opacity-100" : "opacity-0"
           }`}
           style={{
-            /* Mobile: centrar en el auto del medio; Desktop: vista completa */
-            objectPosition: isMobile ? "50% 50%" : "center center",
+            /* Mobile: posición más alta para mostrar más del showroom; Desktop: vista completa */
+            objectPosition: isMobile ? "50% 38%" : "center center",
           }}
         >
-          {/* Serve optimized sources by device */}
           {isMobile ? (
             <>
               <source src={videoMobileWebm} type="video/webm" />
@@ -116,10 +114,10 @@ export default function Hero() {
         </video>
       </div>
 
-      {/* Gradient overlays */}
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,.88)_0%,rgba(0,0,0,.58)_30%,rgba(0,0,0,.18)_60%,rgba(0,0,0,.30)_100%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,.52)_0%,rgba(0,0,0,.05)_40%,rgba(11,11,11,.90)_100%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_58%,rgba(225,29,72,.18),transparent_24%),radial-gradient(circle_at_58%_28%,rgba(140,231,243,.10),transparent_26%)]" />
+      {/* Gradient overlays — lighter on mobile to show more video */}
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,.82)_0%,rgba(0,0,0,.48)_30%,rgba(0,0,0,.12)_60%,rgba(0,0,0,.24)_100%)] sm:bg-[linear-gradient(90deg,rgba(0,0,0,.88)_0%,rgba(0,0,0,.58)_30%,rgba(0,0,0,.18)_60%,rgba(0,0,0,.30)_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,.38)_0%,rgba(0,0,0,.02)_35%,rgba(11,11,11,.88)_100%)] sm:bg-[linear-gradient(180deg,rgba(0,0,0,.52)_0%,rgba(0,0,0,.05)_40%,rgba(11,11,11,.90)_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_58%,rgba(225,29,72,.14),transparent_24%),radial-gradient(circle_at_58%_28%,rgba(140,231,243,.08),transparent_26%)]" />
 
       {/* Animated light effects */}
       <motion.div
@@ -137,16 +135,6 @@ export default function Hero() {
       {/* Content */}
       <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-end px-5 pb-10 pt-28 sm:px-6 lg:px-8 lg:pb-16">
         <div className="max-w-2xl">
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.68, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-black/35 px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-white/[0.74] backdrop-blur-xl"
-          >
-            <ShieldCheck className="h-4 w-4 text-champagne" />
-            Ciudad del Plata · Atención directa
-          </motion.div>
-
           <motion.h1
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
@@ -160,9 +148,9 @@ export default function Hero() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.18, duration: 0.68, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-6 max-w-xl text-base leading-7 text-white/[0.72] sm:text-lg sm:leading-8"
+            className="mt-6 max-w-xl text-base leading-7 text-white/[0.78] sm:text-lg sm:leading-8"
           >
-            Autos, camionetas y motos seleccionados con financiación flexible y atención directa en Ciudad del Plata.
+            Autos, camionetas y motos con financiación flexible y atención personalizada en Ciudad del Plata.
           </motion.p>
 
           <motion.div
