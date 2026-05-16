@@ -13,14 +13,14 @@ const WhatsAppIcon = () => (
 export default function Hero() {
   return (
     <section className="relative h-[100svh] w-full overflow-hidden bg-black">
-      {/* Video Background */}
+      {/* Video Background - High clarity, minimal filter */}
       <div className="absolute inset-0 z-0">
         <video
           autoPlay
           muted
           loop
           playsInline
-          className="h-full w-full object-cover opacity-80"
+          className="h-full w-full object-cover opacity-90 brightness-110"
           style={{ objectPosition: "50% 50%" }}
         >
           <source
@@ -29,9 +29,9 @@ export default function Hero() {
           />
         </video>
         
-        {/* Gradients tailored for readability and logo safety */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-transparent lg:from-black/60" />
+        {/* Subtle edge-only gradients for text contrast */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent lg:from-black/40" />
       </div>
 
       {/* Content Container */}
@@ -48,7 +48,7 @@ export default function Hero() {
               <span className="text-sport">empieza acá</span>
             </h1>
             
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-white/80 sm:text-xl lg:mt-8">
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-white sm:text-xl lg:mt-8 font-medium">
               Autos, camionetas y motos con financiación flexible y atención personalizada en Ciudad del Plata.
             </p>
 
@@ -59,7 +59,7 @@ export default function Hero() {
               <Button
                 href="https://wa.me/59892557747"
                 variant="outline"
-                className="w-full sm:w-auto border-white/20 hover:border-sport bg-black/10 backdrop-blur-md"
+                className="w-full sm:w-auto border-white/40 hover:border-sport bg-black/5 backdrop-blur-md"
               >
                 <div className="flex items-center gap-3">
                   <WhatsAppIcon />
@@ -83,7 +83,7 @@ export default function Hero() {
               {[...tags, ...tags, ...tags].map((tag, i) => (
                 <span
                   key={i}
-                  className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-white/30"
+                  className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-white/40"
                 >
                   <span className="h-1 w-1 rounded-full bg-sport" />
                   {tag}
