@@ -4,7 +4,7 @@ import Navbar from "./components/Navbar.jsx";
 import PageHero from "./components/PageHero.jsx";
 import SmartFloatingCTA from "./components/SmartFloatingCTA.jsx";
 import Button from "./components/Button.jsx";
-import { isAuthenticated } from "./services/authService";
+import { isAuthenticated, checkSession } from "./services/authService";
 
 const HomePage = lazy(() => import("./app/HomePage.jsx"));
 const CatalogPage = lazy(() => import("./app/CatalogPage.jsx"));
@@ -42,6 +42,14 @@ export default function App() {
   const pathname = usePathname();
   const isAdminPath = pathname.startsWith("/admin");
   const [isAuthorized, setIsAuthorized] = useState(isAuthenticated());
+
+  useEffect(() => {
+    async function verify() {
+      const active = await checkSession();
+      setIsAuthorized(active);
+    }
+    verify();
+  }, []);
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;

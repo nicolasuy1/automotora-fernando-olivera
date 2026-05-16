@@ -1,22 +1,48 @@
-const ADMIN_EMAIL = "admin@fernandoolivera.com";
-const ADMIN_PASS = "admin2026";
+import { supabase } from "../lib/supabase";
 
-export function login(email, password) {
-  if (email === ADMIN_EMAIL && password === ADMIN_PASS) {
-    localStorage.setItem("fo_auth_token", "authorized_" + Date.now());
+/**
+ * Inicia sesión usando Supabase Auth
+ * @param {string} email 
+ * @param {string} password 
+ */
+export async function login(email, password) {
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) throw error;
+    
+    // Supabase maneja el token automáticamente en localStorage
     return true;
+  } catch (error) {
+    console.error("Auth error:", error.message);
+    return false;
   }
-  return false;
 }
 
-export function logout() {
-  localStorage.removeItem("fo_auth_token");
+/**
+ * Cierra la sesión
+ */
+export async function logout() {
+  await supabase.auth.signOut();
 }
 
+/**
+ * Verifica si hay una sesión activa
+ * Nota: Esta función es asíncrona ahora para ser más precisa
+ */
+export async function checkSession() {
+  const { data: { session } } = await supabase.auth.getSession();
+  return !!session;
+}
+
+/**
+ * Versión síncrona básica para estados iniciales rápidos
+ */
 export function isAuthenticated() {
-  const token = localStorage.getItem("fo_auth_token");
-  if (!token) return false;
-  
-  // Basic check: token should start with "authorized_"
-  return token.startsWith("authorized_");
+  // Verificamos si existe el item de sesión en el storage de supabase
+  const session = localStorage.getItem('sb-mynxdchrmrdhbheqwdpi-auth-token');
+  return !!session;
 }
