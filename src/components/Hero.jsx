@@ -20,7 +20,7 @@ export default function Hero() {
           muted
           loop
           playsInline
-          className="h-full w-full object-cover opacity-90 brightness-110"
+          className="h-full w-full object-cover opacity-100 brightness-105"
           style={{ objectPosition: "50% 50%" }}
         >
           <source
@@ -29,9 +29,9 @@ export default function Hero() {
           />
         </video>
         
-        {/* Subtle edge-only gradients for text contrast */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent lg:from-black/40" />
+        {/* Minimal edge-only gradients for text contrast without darkening the video */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/5 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-transparent lg:from-black/20" />
       </div>
 
       {/* Content Container */}

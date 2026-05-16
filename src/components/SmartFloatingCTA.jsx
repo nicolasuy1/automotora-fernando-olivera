@@ -63,7 +63,7 @@ export default function SmartFloatingCTA() {
       transition={{ delay: 0.7, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
       whileHover={{ scale: 1.04 }}
       whileTap={{ scale: 0.98 }}
-      className="cta-pulse premium-button fixed bottom-4 left-4 right-4 z-[100] flex min-h-12 items-center justify-center gap-2 rounded-full border border-sport bg-sport px-4 text-xs font-black uppercase tracking-[0.14em] text-white shadow-glow sm:bottom-7 sm:left-auto sm:w-auto sm:justify-start sm:px-5"
+      className="cta-pulse premium-button fixed bottom-6 left-1/2 z-[100] flex min-h-12 w-[90%] max-w-xs -translate-x-1/2 items-center justify-center gap-2 rounded-full border border-sport bg-sport px-6 text-xs font-black uppercase tracking-[0.14em] text-white shadow-glow sm:bottom-8 sm:max-w-[16rem] sm:px-8"
     >
       <span className="relative z-10 flex items-center gap-3">
         <Icon className="h-5 w-5" />
