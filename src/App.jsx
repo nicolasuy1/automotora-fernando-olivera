@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar.jsx";
 import PageHero from "./components/PageHero.jsx";
 import SmartFloatingCTA from "./components/SmartFloatingCTA.jsx";
 import Button from "./components/Button.jsx";
+import { authService } from "./services/authService";
 
 const HomePage = lazy(() => import("./app/HomePage.jsx"));
 const CatalogPage = lazy(() => import("./app/CatalogPage.jsx"));
@@ -11,6 +12,7 @@ const VehicleDetailPage = lazy(() => import("./app/VehicleDetailPage.jsx"));
 const FinancingPage = lazy(() => import("./app/FinancingPage.jsx"));
 const ContactPage = lazy(() => import("./app/ContactPage.jsx"));
 const AdminPage = lazy(() => import("./app/AdminPage.jsx"));
+const AdminLoginPage = lazy(() => import("./app/AdminLoginPage.jsx"));
 
 function usePathname() {
   const [pathname, setPathname] = useState(window.location.pathname);
@@ -38,7 +40,8 @@ function NotFoundPage() {
 
 export default function App() {
   const pathname = usePathname();
-  const isAdmin = pathname.startsWith("/admin");
+  const isAdminPath = pathname.startsWith("/admin");
+  const [isAuthorized, setIsAuthorized] = useState(authService.isAuthenticated());
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -93,17 +96,26 @@ export default function App() {
     }
     if (pathname === "/financiacion") return <FinancingPage />;
     if (pathname === "/contacto") return <ContactPage />;
-    if (pathname.startsWith("/admin")) return <AdminPage />;
+    
+    // Admin route logic
+    if (isAdminPath) {
+      if (isAuthorized) {
+        return <AdminPage />;
+      } else {
+        return <AdminLoginPage onLogin={() => setIsAuthorized(true)} />;
+      }
+    }
+
     return <NotFoundPage />;
-  }, [pathname]);
+  }, [pathname, isAuthorized, isAdminPath]);
 
   return (
     <>
       <main className="min-h-screen overflow-hidden bg-ink text-white">
-        {!isAdmin && <Navbar />}
+        {!isAdminPath && <Navbar />}
         <Suspense fallback={<div className="min-h-screen bg-ink" />}>{page}</Suspense>
       </main>
-      {!isAdmin && <SmartFloatingCTA />}
+      {!isAdminPath && <SmartFloatingCTA />}
     </>
   );
 }
