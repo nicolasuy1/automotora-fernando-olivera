@@ -32,6 +32,17 @@ export default function FeaturedVehicleSection() {
     loadFeatured();
   }, []);
 
+  // Auto-play effect
+  useEffect(() => {
+    if (featured.length === 0) return;
+    
+    const interval = setInterval(() => {
+      scroll('right');
+    }, 4500); // Pass a slide every 4.5 seconds
+
+    return () => clearInterval(interval);
+  }, [featured]);
+
   const scroll = (direction) => {
     if (scrollRef.current) {
       const { scrollLeft, clientWidth, scrollWidth } = scrollRef.current;
