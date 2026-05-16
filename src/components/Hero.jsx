@@ -7,14 +7,14 @@ const tags = ["Financiación", "Permuta", "Entrega coordinada", "Ciudad del Plat
 export default function Hero() {
   return (
     <section className="relative min-h-[95vh] w-full overflow-hidden bg-black lg:h-screen">
-      {/* Video Background */}
+      {/* Video Background - Increased opacity for more punch */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <video
           autoPlay
           muted
           loop
           playsInline
-          className="h-full w-full object-cover opacity-50"
+          className="h-full w-full object-cover opacity-85"
           style={{ objectPosition: "50% 45%" }}
         >
           <source
@@ -22,9 +22,10 @@ export default function Hero() {
             type="video/mp4"
           />
         </video>
-        {/* Smarter Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent lg:hidden" />
+        
+        {/* Smarter, lighter overlays to show more video */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent lg:from-black/50" />
       </div>
 
       {/* Content Container */}
@@ -41,7 +42,7 @@ export default function Hero() {
               <span className="text-sport">empieza acá</span>
             </h1>
             
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-white/60 sm:text-xl lg:mt-8">
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-white/80 sm:text-xl lg:mt-8">
               Autos, camionetas y motos con financiación flexible y atención personalizada en Ciudad del Plata.
             </p>
 
@@ -52,7 +53,7 @@ export default function Hero() {
               <Button
                 href="https://wa.me/59892557747"
                 variant="outline"
-                className="w-full sm:w-auto border-white/10 hover:border-sport"
+                className="w-full sm:w-auto border-white/20 hover:border-sport bg-black/10 backdrop-blur-sm"
               >
                 <div className="flex items-center gap-2">
                   <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current text-[#25D366]" xmlns="http://www.w3.org/2000/svg">
@@ -78,7 +79,7 @@ export default function Hero() {
               {[...tags, ...tags, ...tags].map((tag, i) => (
                 <span
                   key={i}
-                  className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.25em] text-white/30"
+                  className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.25em] text-white/40"
                 >
                   <span className="h-1 w-1 rounded-full bg-sport" />
                   {tag}
