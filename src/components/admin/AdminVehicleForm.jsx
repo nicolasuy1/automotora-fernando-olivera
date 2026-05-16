@@ -317,13 +317,13 @@ export default function AdminVehicleForm({ vehicleId, onSave, onCancel }) {
           <div className={SECTION_CLASS}>
             <h2 className="mb-6 text-xl font-black text-white uppercase tracking-tight">Descripción</h2>
             <div className="space-y-6">
-              <Field label="Resumen Corto">
+              <Field label="Descripción">
                 <textarea
                   value={form.short_description}
                   onChange={(e) => handleChange("short_description", e.target.value)}
                   placeholder="Ej: Camioneta en excelente estado, único dueño..."
                   rows={4}
-                  className={`${INPUT_CLASS} resize-y min-h-[120px]`}
+                  className={`${INPUT_CLASS} resize-y min-h-[120px] overflow-y-auto`}
                 />
               </Field>
               <Field label="Visual en Catálogo">
