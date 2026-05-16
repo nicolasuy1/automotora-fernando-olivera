@@ -1,5 +1,6 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, MessageCircle } from "lucide-react";
+import { ArrowRight, MessageCircle, Loader2 } from "lucide-react";
 import Button from "./Button.jsx";
 import SectionReveal from "./SectionReveal.jsx";
 import VehicleVisual from "./VehicleVisual.jsx";
@@ -18,7 +19,32 @@ const item = {
 };
 
 export default function FeaturedVehicleSection() {
-  const featured = getFeaturedVehicles(3);
+  const [featured, setFeatured] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadFeatured() {
+      try {
+        const data = await getFeaturedVehicles(3);
+        setFeatured(data);
+      } catch (error) {
+        console.error("Error loading featured vehicles:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadFeatured();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-sport" />
+      </div>
+    );
+  }
+
+  if (featured.length === 0) return null;
 
   return (
     <SectionReveal id="vehiculos" className="relative overflow-hidden px-5 py-20 sm:px-6 lg:px-8">
@@ -48,7 +74,7 @@ export default function FeaturedVehicleSection() {
               key={vehicle.id}
               variants={item}
               whileHover={{ y: -8 }}
-              className={`premium-surface group relative overflow-hidden rounded-3xl p-4 ${index === 0 ? "lg:col-span-2" : ""}`}
+              className={`premium-surface group relative overflow-hidden rounded-3xl p-4 ${index === 0 && featured.length > 2 ? "lg:col-span-2" : ""}`}
             >
               <a
                 href={`/catalogo/${vehicle.slug}`}
@@ -56,12 +82,12 @@ export default function FeaturedVehicleSection() {
                 className="block"
               >
                 <VehicleVisual
-                  type={vehicle.visual}
+                  type={vehicle.visual_type}
                   name={vehicle.title}
-                  image={vehicle.mainImageUrl}
-                  imageAlt={vehicle.imageAlt}
+                  image={vehicle.main_image_url}
+                  imageAlt={vehicle.brand + " " + vehicle.model}
                   note="Consultá disponibilidad y financiación."
-                  className={`${index === 0 ? "h-[390px]" : "h-[270px]"} rounded-2xl`}
+                  className={`${index === 0 && featured.length > 2 ? "h-[390px]" : "h-[270px]"} rounded-2xl`}
                 />
               </a>
               <div className="mt-5 grid gap-5 sm:grid-cols-[1fr_auto] sm:items-end">
@@ -70,12 +96,12 @@ export default function FeaturedVehicleSection() {
                     {vehicle.brand} / {vehicle.year}
                   </p>
                   <h3 className="mt-2 text-3xl font-black leading-tight text-white">{vehicle.title}</h3>
-                  <p className="mt-3 max-w-xl text-sm leading-6 text-white/[0.62]">{vehicle.shortDescription}</p>
+                  <p className="mt-3 max-w-xl text-sm leading-6 text-white/[0.62]">{vehicle.short_description}</p>
                   <div className="mt-4 flex flex-wrap gap-2">
                     {[
-                      vehicle.priceVisible && vehicle.priceUsd ? `USD ${vehicle.priceUsd.toLocaleString()}` : "Consultar precio",
-                      vehicle.financingText,
-                      vehicle.acceptsTrade ? "Permuta" : null,
+                      vehicle.price_visible && vehicle.price_usd ? `USD ${vehicle.price_usd.toLocaleString()}` : "Consultar precio",
+                      vehicle.financing_text,
+                      vehicle.accepts_trade ? "Permuta" : null,
                     ]
                       .filter(Boolean)
                       .map((tag) => (

@@ -1,177 +1,205 @@
-import { useState } from "react";
-import {
-  Copy,
-  Eye,
-  EyeOff,
-  Pencil,
-  ShoppingCart,
-  Star,
-  StarOff,
-  Trash2,
-  Undo2,
+import { useState, useEffect } from "react";
+import { 
+  Trash2, 
+  Edit2, 
+  Star, 
+  Eye, 
+  EyeOff, 
+  Copy, 
+  CheckCircle2, 
+  Loader2, 
+  Search,
+  Filter
 } from "lucide-react";
-import {
-  getAllVehicles,
-  deleteVehicle,
-  markAsSold,
-  toggleFeatured,
-  togglePublished,
-  duplicateVehicle,
-  updateVehicle,
+import { 
+  getAllVehicles, 
+  deleteVehicle, 
+  markAsSold, 
+  toggleFeatured, 
+  togglePublished, 
+  duplicateVehicle 
 } from "../../services/vehicleService.js";
 
 export default function AdminVehicleList({ onEdit, onRefresh }) {
+  const [vehicles, setVehicles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
-  const vehicles = getAllVehicles();
 
-  const filtered =
-    filter === "all"
-      ? vehicles
-      : vehicles.filter((v) => {
-          if (filter === "featured") return v.featured;
-          return v.status === filter;
-        });
+  useEffect(() => {
+    loadVehicles();
+  }, []);
 
-  function handleDelete(id, title) {
-    if (window.confirm(`¿Eliminar "${title}"? Esta acción no se puede deshacer.`)) {
-      deleteVehicle(id);
-      onRefresh();
+  async function loadVehicles() {
+    setLoading(true);
+    try {
+      const data = await getAllVehicles();
+      setVehicles(data);
+    } catch (error) {
+      console.error("Error loading vehicles:", error);
+    } finally {
+      setLoading(false);
     }
   }
 
-  function handleAction(fn, id) {
-    fn(id);
-    onRefresh();
+  async function handleDelete(id) {
+    if (!confirm("¿Seguro que querés eliminar este vehículo? Esta acción no se puede deshacer.")) return;
+    try {
+      await deleteVehicle(id);
+      loadVehicles();
+    } catch (error) {
+      alert("Error al eliminar.");
+    }
+  }
+
+  async function handleAction(actionFn, id) {
+    try {
+      await actionFn(id);
+      loadVehicles();
+    } catch (error) {
+      alert("Error al realizar la acción.");
+    }
+  }
+
+  async function handleDuplicate(id) {
+    try {
+      await duplicateVehicle(id);
+      loadVehicles();
+    } catch (error) {
+      alert("Error al duplicar.");
+    }
+  }
+
+  const filteredVehicles = vehicles.filter(v => {
+    const matchesSearch = v.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          v.brand.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = filter === "all" || v.status === filter;
+    return matchesSearch && matchesFilter;
+  });
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-sport" />
+      </div>
+    );
   }
 
   return (
-    <div>
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-3xl font-black text-white">Vehículos</h1>
-        <p className="text-sm text-white/40">{filtered.length} de {vehicles.length}</p>
-      </div>
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-black text-white uppercase tracking-tighter">Inventario</h1>
+          <p className="text-white/40 text-xs uppercase tracking-widest mt-1">
+            {filteredVehicles.length} unidades encontradas
+          </p>
+        </div>
 
-      {/* Status filter tabs */}
-      <div className="mb-6 flex flex-wrap gap-2">
-        {[
-          { id: "all", label: "Todos" },
-          { id: "published", label: "Publicados" },
-          { id: "draft", label: "Borradores" },
-          { id: "sold", label: "Vendidos" },
-          { id: "hidden", label: "Ocultos" },
-          { id: "featured", label: "Destacados" },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setFilter(tab.id)}
-            className={`rounded-full border px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] transition ${
-              filter === tab.id
-                ? "border-sport bg-sport/15 text-sport"
-                : "border-white/10 text-white/50 hover:text-white"
-            }`}
+        <div className="flex flex-1 max-w-md gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+            <input 
+              type="text" 
+              placeholder="Buscar por marca o modelo..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white outline-none focus:border-sport/50 transition-all"
+            />
+          </div>
+          <select 
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs font-bold text-white/70 outline-none focus:border-sport/50 transition-all"
           >
-            {tab.label}
-          </button>
-        ))}
+            <option value="all">Todos</option>
+            <option value="available">Disponibles</option>
+            <option value="sold">Vendidos</option>
+            <option value="reserved">Reservados</option>
+          </select>
+        </div>
       </div>
 
-      {/* Vehicle list */}
-      <div className="grid gap-3">
-        {filtered.map((vehicle) => (
-          <div
+      <div className="grid gap-4">
+        {filteredVehicles.map((vehicle) => (
+          <div 
             key={vehicle.id}
-            className="group rounded-2xl border border-white/10 bg-white/[0.025] p-4 transition hover:border-white/15 hover:bg-white/[0.04]"
+            className="group relative flex flex-col sm:flex-row sm:items-center gap-5 rounded-3xl border border-white/10 bg-white/[0.02] p-4 transition-all hover:bg-white/[0.04] hover:border-white/20"
           >
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              {/* Image */}
-              <div className="h-20 w-28 shrink-0 overflow-hidden rounded-xl bg-carbon">
-                <img
-                  src={vehicle.mainImageUrl || "/images/backgrounds/showroom-premium.jpeg"}
-                  alt={vehicle.title}
-                  className="h-full w-full object-cover"
-                />
-              </div>
+            {/* Thumbnail */}
+            <div className="h-24 w-full sm:w-36 shrink-0 overflow-hidden rounded-2xl bg-carbon">
+              <img 
+                src={vehicle.main_image_url || "/images/backgrounds/showroom-premium.jpeg"} 
+                alt={vehicle.title}
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+            </div>
 
-              {/* Info */}
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <h3 className="truncate text-lg font-black text-white">{vehicle.title || "Sin título"}</h3>
-                  {vehicle.featured && (
-                    <Star className="h-4 w-4 shrink-0 fill-champagne text-champagne" />
-                  )}
-                </div>
-                <p className="mt-1 text-sm text-white/40">
-                  {vehicle.brand} · {vehicle.model} · {vehicle.year} · {vehicle.type}
-                </p>
-                <div className="mt-2 flex flex-wrap items-center gap-2">
-                  <StatusBadge status={vehicle.status} />
-                  <span className="text-sm font-bold text-white/60">
-                    {vehicle.priceVisible && vehicle.priceUsd
-                      ? `USD ${vehicle.priceUsd.toLocaleString()}`
-                      : "Consultar"}
-                  </span>
-                  {vehicle.acceptsTrade && (
-                    <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 text-[10px] font-bold text-white/50">
-                      Permuta
-                    </span>
-                  )}
-                </div>
+            {/* Info */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="truncate text-lg font-black text-white uppercase tracking-tight">{vehicle.title}</h3>
+                {vehicle.featured && <Star className="h-4 w-4 text-champagne fill-champagne" />}
               </div>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] font-bold uppercase tracking-widest text-white/30">
+                <span>{vehicle.year}</span>
+                <span>{vehicle.brand}</span>
+                <span>{vehicle.category}</span>
+                <span className="text-white/60">USD {vehicle.price_usd?.toLocaleString() || "---"}</span>
+              </div>
+            </div>
 
-              {/* Actions */}
-              <div className="flex flex-wrap gap-1.5 sm:flex-nowrap">
-                <ActionButton
-                  icon={Pencil}
-                  label="Editar"
-                  onClick={() => onEdit(vehicle.id)}
-                />
-                <ActionButton
-                  icon={Copy}
-                  label="Duplicar"
-                  onClick={() => handleAction(duplicateVehicle, vehicle.id)}
-                />
-                <ActionButton
-                  icon={vehicle.featured ? StarOff : Star}
-                  label={vehicle.featured ? "Quitar dest." : "Destacar"}
-                  onClick={() => handleAction(toggleFeatured, vehicle.id)}
-                  className={vehicle.featured ? "text-champagne border-champagne/30" : ""}
-                />
-                {vehicle.status === "sold" ? (
-                  <ActionButton
-                    icon={Undo2}
-                    label="Reactivar"
-                    onClick={() => {
-                      updateVehicle(vehicle.id, { status: "published" });
-                      onRefresh();
-                    }}
-                  />
-                ) : (
-                  <ActionButton
-                    icon={ShoppingCart}
-                    label="Vendido"
-                    onClick={() => handleAction(markAsSold, vehicle.id)}
-                    className="text-sport"
-                  />
-                )}
-                <ActionButton
-                  icon={vehicle.status === "published" ? EyeOff : Eye}
-                  label={vehicle.status === "published" ? "Ocultar" : "Publicar"}
-                  onClick={() => handleAction(togglePublished, vehicle.id)}
-                />
-                <ActionButton
-                  icon={Trash2}
-                  label="Eliminar"
-                  onClick={() => handleDelete(vehicle.id, vehicle.title)}
-                  className="text-red-400 hover:!border-red-500/40 hover:!bg-red-500/10"
-                />
-              </div>
+            {/* Status */}
+            <StatusBadge status={vehicle.status} />
+
+            {/* Actions */}
+            <div className="flex items-center gap-2 border-t border-white/5 pt-4 sm:border-0 sm:pt-0">
+              <ActionButton 
+                icon={Edit2} 
+                label="Editar" 
+                onClick={() => onEdit(vehicle.id)} 
+                color="hover:text-blue-400"
+              />
+              <ActionButton 
+                icon={CheckCircle2} 
+                label="Vendido" 
+                onClick={() => handleAction(markAsSold, vehicle.id)} 
+                color="hover:text-sport"
+                active={vehicle.status === "sold"}
+              />
+              <ActionButton 
+                icon={Star} 
+                label="Destacar" 
+                onClick={() => handleAction(toggleFeatured, vehicle.id)} 
+                color="hover:text-champagne"
+                active={vehicle.featured}
+              />
+              <ActionButton 
+                icon={vehicle.status === "available" ? Eye : EyeOff} 
+                label={vehicle.status === "available" ? "Ocultar" : "Mostrar"} 
+                onClick={() => handleAction(togglePublished, vehicle.id)} 
+                color="hover:text-emerald-400"
+              />
+              <div className="w-px h-6 bg-white/10 mx-1 hidden sm:block" />
+              <ActionButton 
+                icon={Copy} 
+                label="Duplicar" 
+                onClick={() => handleDuplicate(vehicle.id)} 
+                color="hover:text-white"
+              />
+              <ActionButton 
+                icon={Trash2} 
+                label="Borrar" 
+                onClick={() => handleDelete(vehicle.id)} 
+                color="hover:text-red-500"
+              />
             </div>
           </div>
         ))}
 
-        {filtered.length === 0 && (
-          <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-12 text-center">
-            <p className="text-lg font-black text-white/60">No hay vehículos en esta categoría</p>
+        {filteredVehicles.length === 0 && (
+          <div className="text-center py-20 rounded-3xl border border-dashed border-white/10 bg-white/[0.01]">
+            <Package className="mx-auto h-12 w-12 text-white/10 mb-4" />
+            <p className="text-sm font-black uppercase tracking-widest text-white/20">No se encontraron unidades</p>
           </div>
         )}
       </div>
@@ -179,36 +207,36 @@ export default function AdminVehicleList({ onEdit, onRefresh }) {
   );
 }
 
-function ActionButton({ icon: Icon, label, onClick, className = "" }) {
-  return (
-    <button
-      onClick={onClick}
-      title={label}
-      className={`grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/[0.03] text-white/50 transition hover:border-white/20 hover:bg-white/[0.07] hover:text-white ${className}`}
-    >
-      <Icon className="h-4 w-4" />
-    </button>
-  );
-}
-
 function StatusBadge({ status }) {
   const styles = {
-    published: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400",
-    draft: "border-amber-500/30 bg-amber-500/10 text-amber-400",
+    available: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400",
+    reserved: "border-amber-500/30 bg-amber-500/10 text-amber-400",
     sold: "border-sport/30 bg-sport/10 text-sport",
     hidden: "border-gray-500/30 bg-gray-500/10 text-gray-400",
   };
 
   const labels = {
-    published: "Publicado",
-    draft: "Borrador",
+    available: "Disponible",
+    reserved: "Reservado",
     sold: "Vendido",
     hidden: "Oculto",
   };
 
   return (
-    <span className={`shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] ${styles[status] || styles.draft}`}>
+    <span className={`shrink-0 rounded-xl border px-3 py-1.5 text-[10px] font-black uppercase tracking-widest ${styles[status] || styles.reserved}`}>
       {labels[status] || status}
     </span>
+  );
+}
+
+function ActionButton({ icon: Icon, label, onClick, color, active }) {
+  return (
+    <button
+      onClick={onClick}
+      title={label}
+      className={`grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/5 transition-all duration-300 ${color} ${active ? 'bg-white/10 border-white/20 text-white' : 'text-white/40'}`}
+    >
+      <Icon className={`h-4 w-4 ${active ? 'fill-current' : ''}`} />
+    </button>
   );
 }
