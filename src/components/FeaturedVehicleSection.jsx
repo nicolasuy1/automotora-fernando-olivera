@@ -16,8 +16,13 @@ export default function FeaturedVehicleSection() {
   useEffect(() => {
     async function loadFeatured() {
       try {
-        const data = await getFeaturedVehicles(10); // Fetch more for the carousel
-        setFeatured(data);
+        const data = await getFeaturedVehicles(10);
+        // Duplicate data for infinite feel
+        if (data.length > 3) {
+          setFeatured([...data, ...data]); 
+        } else {
+          setFeatured(data);
+        }
       } catch (error) {
         console.error("Error loading featured vehicles:", error);
       } finally {
@@ -29,9 +34,27 @@ export default function FeaturedVehicleSection() {
 
   const scroll = (direction) => {
     if (scrollRef.current) {
-      const { scrollLeft, clientWidth } = scrollRef.current;
-      const scrollTo = direction === 'left' ? scrollLeft - clientWidth : scrollLeft + clientWidth;
-      scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+      const { scrollLeft, clientWidth, scrollWidth } = scrollRef.current;
+      const itemWidth = clientWidth * 0.85; // Roughly the width of one card on mobile
+      
+      let newScrollLeft;
+      if (direction === 'left') {
+        newScrollLeft = scrollLeft - clientWidth;
+        if (newScrollLeft < 0) {
+          // Jump to the end of the first set
+          scrollRef.current.scrollLeft = scrollWidth / 2;
+          newScrollLeft = (scrollWidth / 2) - clientWidth;
+        }
+      } else {
+        newScrollLeft = scrollLeft + clientWidth;
+        if (newScrollLeft + clientWidth > scrollWidth) {
+          // Jump to the start
+          scrollRef.current.scrollLeft = 0;
+          newScrollLeft = clientWidth;
+        }
+      }
+      
+      scrollRef.current.scrollTo({ left: newScrollLeft, behavior: 'smooth' });
     }
   };
 
@@ -62,13 +85,13 @@ export default function FeaturedVehicleSection() {
           <div className="flex gap-3">
             <button
               onClick={() => scroll('left')}
-              className="grid h-12 w-12 place-items-center rounded-full border border-white/10 bg-white/5 text-white/40 transition hover:border-sport hover:text-white"
+              className="grid h-12 w-12 place-items-center rounded-full border border-white/10 bg-white/5 text-white/40 transition hover:border-sport hover:text-white active:scale-95"
             >
               <ChevronLeft className="h-6 w-6" />
             </button>
             <button
               onClick={() => scroll('right')}
-              className="grid h-12 w-12 place-items-center rounded-full border border-white/10 bg-white/5 text-white/40 transition hover:border-sport hover:text-white"
+              className="grid h-12 w-12 place-items-center rounded-full border border-white/10 bg-white/5 text-white/40 transition hover:border-sport hover:text-white active:scale-95"
             >
               <ChevronRight className="h-6 w-6" />
             </button>
@@ -81,9 +104,9 @@ export default function FeaturedVehicleSection() {
           className="flex gap-6 overflow-x-auto pb-12 no-scrollbar scroll-smooth"
           style={{ scrollSnapType: 'x mandatory' }}
         >
-          {featured.map((vehicle) => (
+          {featured.map((vehicle, index) => (
             <div 
-              key={vehicle.id}
+              key={`${vehicle.id}-${index}`}
               className="min-w-[85vw] sm:min-w-[450px] lg:min-w-[500px]"
               style={{ scrollSnapAlign: 'start' }}
             >

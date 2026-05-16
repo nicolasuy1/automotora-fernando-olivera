@@ -346,7 +346,7 @@ export default function AdminVehicleForm({ vehicleId, onSave, onCancel }) {
 }
 
 const INPUT_CLASS =
-  "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3.5 text-sm text-white placeholder:text-white/20 outline-none transition focus:border-sport/50 focus:ring-1 focus:ring-sport/20 backdrop-blur-md";
+  "w-full rounded-xl border border-white/10 bg-[#1a1a1c] px-4 py-3.5 text-sm text-white placeholder:text-white/20 outline-none transition focus:border-sport/50 focus:ring-1 focus:ring-sport/20 backdrop-blur-md appearance-none [&>option]:bg-[#1a1a1c] [&>option]:text-white";
 
 function Field({ label, children }) {
   return (
