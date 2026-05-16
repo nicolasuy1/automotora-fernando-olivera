@@ -12,8 +12,8 @@ const item = {
 
 export default function VehicleCard({ vehicle }) {
   const displayPrice =
-    vehicle.priceVisible && vehicle.priceUsd
-      ? `USD ${vehicle.priceUsd.toLocaleString()}`
+    (vehicle.price_visible ?? vehicle.priceVisible) && (vehicle.price_usd ?? vehicle.priceUsd)
+      ? `USD ${(vehicle.price_usd || vehicle.priceUsd).toLocaleString()}`
       : "Consultar";
 
   const isSold = vehicle.status === "sold";
@@ -33,10 +33,10 @@ export default function VehicleCard({ vehicle }) {
         <div className="relative h-64 overflow-hidden bg-carbon sm:h-72">
           <motion.div className="h-full transition duration-700 group-hover:scale-105">
             <VehicleVisual
-              type={vehicle.visual}
+              type={vehicle.visual_type || vehicle.visual || "compact"}
               name={vehicle.title}
-              image={vehicle.mainImageUrl}
-              imageAlt={vehicle.imageAlt}
+              image={vehicle.main_image_url || vehicle.mainImageUrl}
+              imageAlt={vehicle.brand + " " + vehicle.model}
               note="Consultá disponibilidad y fotos por WhatsApp."
               className="h-full"
               hideOverlay
@@ -54,16 +54,16 @@ export default function VehicleCard({ vehicle }) {
           )}
 
           {vehicle.badge && (
-            <div className="absolute right-4 top-4 rounded-full border border-champagne/20 bg-white/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-champagne backdrop-blur-xl">
+            <div className="absolute right-4 top-4 z-20 rounded-full border border-champagne/20 bg-white/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-champagne backdrop-blur-xl">
               {vehicle.badge}
             </div>
           )}
-          <div className="absolute bottom-4 left-4 right-4">
+          <div className="absolute bottom-4 left-4 right-4 z-20">
             <p className="text-xs font-black uppercase tracking-[0.24em] text-white/[0.48]">
-              {vehicle.brand} / {vehicle.type}
+              {vehicle.brand} / {vehicle.category || vehicle.type}
             </p>
             <h3 className="mt-2 text-2xl font-black leading-tight text-white">{vehicle.title}</h3>
-            <p className="mt-2 line-clamp-2 text-sm font-semibold leading-6 text-white/[0.66]">{vehicle.shortDescription}</p>
+            <p className="mt-2 line-clamp-2 text-sm font-semibold leading-6 text-white/[0.66]">{vehicle.short_description || vehicle.shortDescription}</p>
           </div>
         </div>
       </a>
@@ -75,7 +75,7 @@ export default function VehicleCard({ vehicle }) {
           </span>
           <span className="text-sm font-bold text-white/[0.66]">{vehicle.transmission}</span>
         </div>
-        <p className="text-sm text-white/50">{vehicle.askPrice ? "Precio" : "Desde"}</p>
+        <p className="text-sm text-white/50">{(vehicle.ask_price || vehicle.askPrice) ? "Precio" : "Desde"}</p>
         <p className="text-3xl font-black text-white">{displayPrice}</p>
         {vehicle.mileage && (
           <div className="mt-4 flex items-center gap-2 text-sm text-white/[0.62]">
@@ -84,8 +84,8 @@ export default function VehicleCard({ vehicle }) {
           </div>
         )}
         <div className="mt-3 flex items-center gap-2 text-sm font-black text-sport">
-          <ShieldCheck className="h-4 w-4" />
-          {vehicle.financingText}
+          <ShieldCheck className="h-4 w-4 shrink-0" />
+          <span className="truncate">{vehicle.financing_text || vehicle.financingText}</span>
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
           {(vehicle.highlights || []).slice(0, 3).map((feature) => (

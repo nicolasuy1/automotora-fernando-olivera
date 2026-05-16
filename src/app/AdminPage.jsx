@@ -32,6 +32,9 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0c] pt-36 sm:pt-40 pb-20">
+      {/* Solid backdrop to prevent cars from peeking through the floating main Navbar */}
+      <div className="fixed inset-x-0 top-0 h-[8.5rem] z-40 bg-[#0a0a0c] sm:h-[9rem]" />
+
       {/* Admin header bar */}
       <div className="fixed inset-x-0 top-[4.5rem] z-50 border-b border-white/10 bg-[#0a0a0c] shadow-2xl sm:top-[5rem]">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-3 sm:py-2">
