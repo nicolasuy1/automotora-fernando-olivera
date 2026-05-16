@@ -36,21 +36,21 @@ export default function AdminLoginPage({ onLogin }) {
           muted
           loop
           playsInline
-          className="h-full w-full object-cover opacity-30 brightness-50"
+          className="h-full w-full object-cover opacity-100 brightness-105"
         >
           <source
             src="https://res.cloudinary.com/dvbkp3ml7/video/upload/v1778863564/0515_duxkkk.mov"
             type="video/mp4"
           />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
       </div>
 
       <div className="relative z-10 w-full max-w-md">
         {/* Logo and Header */}
         <div className="mb-10 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-sport shadow-glow">
-            <img src="/logo-fo.png" alt="Logo FO" className="h-10 w-10 object-contain brightness-0 invert" />
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-sport/30 shadow-glow overflow-hidden">
+            <img src="/logo-fernando-olivera.jpeg" alt="Logo FO" className="h-full w-full object-cover" />
           </div>
           <h1 className="text-3xl font-black text-white uppercase tracking-tighter">Panel de Gestión</h1>
           <p className="mt-2 text-xs font-bold uppercase tracking-widest text-white/40">Acceso exclusivo para Fernando Olivera</p>
