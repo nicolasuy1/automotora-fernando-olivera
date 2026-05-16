@@ -75,10 +75,7 @@ export default function AdminPage() {
 
       {/* Content area */}
       <div className="mx-auto max-w-7xl px-4 pt-16 pb-20">
-        {/* Notice */}
-        <div className="mb-6 rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-sm text-amber-200/80">
-          <strong className="font-black">Panel interno de gestión</strong> — versión de prueba. Los datos se guardan en el navegador.
-        </div>
+
 
         {view === "dashboard" && (
           <AdminDashboard

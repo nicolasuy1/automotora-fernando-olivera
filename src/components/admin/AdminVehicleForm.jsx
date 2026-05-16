@@ -67,7 +67,7 @@ export default function AdminVehicleForm({ vehicleId, onSave, onCancel }) {
       onSave();
     } catch (error) {
       console.error("Error saving vehicle:", error);
-      alert("Error al guardar. Verificá la conexión con Supabase.");
+      alert(`Error al guardar: ${error.message || "Verificá la conexión con Supabase."}`);
     } finally {
       setSaving(false);
     }
@@ -322,8 +322,8 @@ export default function AdminVehicleForm({ vehicleId, onSave, onCancel }) {
                   value={form.short_description}
                   onChange={(e) => handleChange("short_description", e.target.value)}
                   placeholder="Ej: Camioneta en excelente estado, único dueño..."
-                  rows={3}
-                  className={INPUT_CLASS}
+                  rows={4}
+                  className={`${INPUT_CLASS} resize-y min-h-[120px]`}
                 />
               </Field>
               <Field label="Visual en Catálogo">
