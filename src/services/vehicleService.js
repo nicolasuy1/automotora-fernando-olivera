@@ -218,6 +218,12 @@ export async function getDashboardStats() {
   const { data: vehicles, error } = await supabase.from('vehicles').select('*');
   if (error) throw error;
 
+  const categoriesMap = {};
+  vehicles.forEach((v) => {
+    const cat = v.category ? v.category.trim() : "Otros";
+    categoriesMap[cat] = (categoriesMap[cat] || 0) + 1;
+  });
+
   return {
     total: vehicles.length,
     published: vehicles.filter(v => v.status === "available").length,
@@ -226,6 +232,7 @@ export async function getDashboardStats() {
     hidden: vehicles.filter(v => v.status === "hidden").length,
     featured: vehicles.filter(v => v.featured).length,
     recent: vehicles.slice(0, 5),
+    categories: categoriesMap,
   };
 }
 

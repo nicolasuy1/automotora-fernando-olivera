@@ -5,20 +5,29 @@ import {
   ChevronLeft,
   LayoutDashboard,
   Plus,
+  LogOut,
 } from "lucide-react";
 import AdminDashboard from "../components/admin/AdminDashboard.jsx";
 import AdminVehicleList from "../components/admin/AdminVehicleList.jsx";
 import AdminVehicleForm from "../components/admin/AdminVehicleForm.jsx";
+import { logout } from "../services/authService.js";
 
 const NAV_ITEMS = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "vehicles", label: "Vehículos", icon: Car },
 ];
 
-export default function AdminPage() {
+export default function AdminPage({ onLogout }) {
   const [view, setView] = useState("dashboard");
   const [editingId, setEditingId] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
+
+  async function handleLogout() {
+    if (confirm("¿Estás seguro que querés cerrar la sesión?")) {
+      await logout();
+      if (onLogout) onLogout();
+    }
+  }
 
   function refresh() {
     setRefreshKey((k) => k + 1);
@@ -68,14 +77,23 @@ export default function AdminPage() {
             })}
           </div>
 
-          <button
-            onClick={() => navigateTo("vehicle-form", null)}
-            className="flex shrink-0 items-center gap-2 rounded-lg border border-sport bg-sport px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white shadow-glow transition hover:brightness-110 sm:text-xs sm:tracking-[0.14em]"
-          >
-            <Plus className="h-4 w-4" />
-            <span className="hidden xs:inline">Nuevo</span>
-            <span className="hidden sm:inline">vehículo</span>
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => navigateTo("vehicle-form", null)}
+              className="flex shrink-0 items-center gap-2 rounded-lg border border-sport bg-sport px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white shadow-glow transition hover:brightness-110 sm:text-xs sm:tracking-[0.14em]"
+            >
+              <Plus className="h-4 w-4" />
+              <span className="hidden xs:inline">Nuevo</span>
+              <span className="hidden sm:inline">vehículo</span>
+            </button>
+            <button
+              onClick={handleLogout}
+              className="flex shrink-0 items-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white/70 transition hover:bg-white/[0.08] hover:text-white sm:text-xs sm:tracking-[0.14em]"
+            >
+              <LogOut className="h-4 w-4" />
+              <span className="hidden xs:inline">Salir</span>
+            </button>
+          </div>
         </div>
       </div>
 

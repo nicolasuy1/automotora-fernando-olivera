@@ -108,7 +108,7 @@ export default function App() {
     // Admin route logic
     if (isAdminPath) {
       if (isAuthorized) {
-        return <AdminPage />;
+        return <AdminPage onLogout={() => setIsAuthorized(false)} />;
       } else {
         return <AdminLoginPage onLogin={() => setIsAuthorized(true)} />;
       }
