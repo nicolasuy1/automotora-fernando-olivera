@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
-import { ArrowRight, MessageCircle } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { handleInternalNavigation } from "../lib/navigation.js";
 import { whatsappHref } from "../lib/whatsapp.js";
+import WhatsAppIcon from "./icons/WhatsAppIcon.jsx";
 
 const sections = [
   { id: "inicio", text: "Ver catálogo", href: "/catalogo", icon: ArrowRight },
@@ -10,14 +11,14 @@ const sections = [
     id: "vehiculos",
     text: "Consultar ahora",
     href: whatsappHref(),
-    icon: MessageCircle,
+    icon: WhatsAppIcon,
   },
   { id: "financiacion", text: "Ver opciones", href: "/financiacion", icon: ArrowRight },
   {
     id: "contacto",
     text: "Hablar ahora",
     href: whatsappHref("Hola Fernando, vi la web y quiero consultar por vehículos disponibles."),
-    icon: MessageCircle,
+    icon: WhatsAppIcon,
   },
 ];
 

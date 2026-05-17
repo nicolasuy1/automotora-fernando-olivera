@@ -1,8 +1,9 @@
-import { Clock, Instagram, MapPin, MessageCircle, Phone } from "lucide-react";
+import { Clock, Instagram, MapPin, Phone } from "lucide-react";
 import Button from "../components/Button.jsx";
 import Footer from "../components/Footer.jsx";
 import PageHero from "../components/PageHero.jsx";
 import { whatsappHref } from "../lib/whatsapp.js";
+import WhatsAppIcon from "../components/icons/WhatsAppIcon.jsx";
 
 export default function ContactPage() {
   return (
@@ -12,11 +13,11 @@ export default function ContactPage() {
         title="Consultá por tu próximo vehículo."
         text="Escribinos por WhatsApp para consultar disponibilidad, financiación, permuta o coordinar una visita al showroom."
       >
-        <Button href={whatsappHref()} icon={MessageCircle} className="cta-pulse">Hablar por WhatsApp</Button>
+        <Button href={whatsappHref()} icon={WhatsAppIcon} className="cta-pulse">Hablar por WhatsApp</Button>
       </PageHero>
       <section className="mx-auto grid max-w-7xl gap-5 px-5 py-20 sm:px-6 md:grid-cols-2 lg:grid-cols-4 lg:px-8">
         {[
-          [Phone, "WhatsApp", "+598 92 557 747"],
+          [WhatsAppIcon, "WhatsApp", "+598 92 557 747"],
           [MapPin, "Ubicación", "Ruta 1 km 24, Ciudad del Plata"],
           [Clock, "Horario", "L-V: 09 a 19 · Sáb: 09 a 14"],
           [Instagram, "Instagram", "@automotora_fernando_olivera_"],
@@ -43,7 +44,7 @@ export default function ContactPage() {
               Coordiná tu visita por WhatsApp para ver los vehículos disponibles y recibir atención personalizada.
             </p>
             <div className="mt-6">
-              <Button href={whatsappHref("Hola Fernando, quiero coordinar una visita al showroom.")} icon={MessageCircle} className="cta-pulse">
+              <Button href={whatsappHref("Hola Fernando, quiero coordinar una visita al showroom.")} icon={WhatsAppIcon} className="cta-pulse">
                 Coordinar visita
               </Button>
             </div>

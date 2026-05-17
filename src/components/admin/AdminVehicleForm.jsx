@@ -16,6 +16,33 @@ import ImageUploader from "./ImageUploader.jsx";
 
 const SECTION_CLASS = "rounded-3xl border border-white/10 bg-white/[0.02] p-6 sm:p-8 backdrop-blur-xl";
 
+const COMMON_EQUIPMENT = [
+  "Aire acondicionado",
+  "Cristales eléctricos",
+  "Dirección asistida",
+  "Cierre centralizado",
+  "Llantas de aleación",
+  "Frenos ABS",
+  "Airbags",
+  "Alarma",
+  "Bloqueo central",
+  "Cámara de reversa",
+  "Sensor de estacionamiento",
+  "Bluetooth",
+  "Tapizado de cuero",
+  "Techo solar"
+];
+
+const COMMON_HIGHLIGHTS = [
+  "Único dueño",
+  "Al día",
+  "Pronto para transferir",
+  "Pintura original",
+  "Servicio recién hecho",
+  "Acepta permuta",
+  "Financiación propia"
+];
+
 export default function AdminVehicleForm({ vehicleId, onSave, onCancel }) {
   const isEditing = Boolean(vehicleId);
   const [form, setForm] = useState(getDefaultVehicle());
@@ -243,6 +270,174 @@ export default function AdminVehicleForm({ vehicleId, onSave, onCancel }) {
                   </select>
                 </Field>
               </div>
+
+              <div className="grid gap-6 sm:grid-cols-2">
+                <Field label="Color">
+                  <input
+                    type="text"
+                    value={form.color || ""}
+                    onChange={(e) => handleChange("color", e.target.value)}
+                    placeholder="Ej: Gris Plata, Rojo, Blanco"
+                    className={INPUT_CLASS}
+                  />
+                </Field>
+                <Field label="Puertas">
+                  <select
+                    value={form.doors || 4}
+                    onChange={(e) => handleChange("doors", parseInt(e.target.value) || 4)}
+                    className={INPUT_CLASS}
+                  >
+                    {[2, 3, 4, 5].map((d) => (
+                      <option key={d} value={d}>{d} Puertas</option>
+                    ))}
+                  </select>
+                </Field>
+              </div>
+            </div>
+          </div>
+
+          {/* Equipamiento y Destacados */}
+          <div className={SECTION_CLASS}>
+            <h2 className="mb-6 text-xl font-black text-white uppercase tracking-tight">Equipamiento y Destacados</h2>
+            
+            {/* Highlights */}
+            <div className="mb-8 border-b border-white/5 pb-8">
+              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/50 mb-4">Insignias / Destacados Rápidos</h3>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {COMMON_HIGHLIGHTS.map((tag) => {
+                  const hasTag = (form.highlights || []).includes(tag);
+                  return (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => {
+                        if (hasTag) {
+                          handleChange("highlights", form.highlights.filter(t => t !== tag));
+                        } else {
+                          handleChange("highlights", [...(form.highlights || []), tag]);
+                        }
+                      }}
+                      className={`rounded-full px-4 py-2 text-xs font-bold transition border ${
+                        hasTag 
+                          ? "bg-sport/10 border-sport/40 text-sport" 
+                          : "bg-white/5 border-white/10 text-white/60 hover:text-white"
+                      }`}
+                    >
+                      {tag}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={highlightInput}
+                  onChange={(e) => setHighlightInput(e.target.value)}
+                  placeholder="Agregar insignia personalizada..."
+                  className={INPUT_CLASS + " flex-1"}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addHighlight();
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={addHighlight}
+                  className="rounded-xl bg-white/5 border border-white/10 px-4 hover:bg-white/10 text-white"
+                >
+                  <Plus className="h-5 w-5" />
+                </button>
+              </div>
+              {/* Selected Custom Tags */}
+              <div className="flex flex-wrap gap-2 mt-4">
+                {(form.highlights || []).map((tag) => {
+                  if (COMMON_HIGHLIGHTS.includes(tag)) return null; // Already shown above
+                  return (
+                    <span key={tag} className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.08] px-3 py-1 text-xs font-semibold text-white">
+                      {tag}
+                      <button
+                        type="button"
+                        onClick={() => handleChange("highlights", form.highlights.filter(t => t !== tag))}
+                        className="rounded-full p-0.5 hover:bg-white/10 text-white/40 hover:text-white"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Equipment Grid */}
+            <div>
+              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/50 mb-4">Equipamiento (Tildar rápidos)</h3>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {COMMON_EQUIPMENT.map((item) => {
+                  const hasItem = (form.equipment || []).includes(item);
+                  return (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => {
+                        if (hasItem) {
+                          handleChange("equipment", form.equipment.filter(e => e !== item));
+                        } else {
+                          handleChange("equipment", [...(form.equipment || []), item]);
+                        }
+                      }}
+                      className={`rounded-full px-4 py-2 text-xs font-bold transition border ${
+                        hasItem 
+                          ? "bg-sport/10 border-sport/40 text-sport" 
+                          : "bg-white/5 border-white/10 text-white/60 hover:text-white"
+                      }`}
+                    >
+                      {item}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={equipmentInput}
+                  onChange={(e) => setEquipmentInput(e.target.value)}
+                  placeholder="Agregar equipamiento personalizado..."
+                  className={INPUT_CLASS + " flex-1"}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addEquipment();
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={addEquipment}
+                  className="rounded-xl bg-white/5 border border-white/10 px-4 hover:bg-white/10 text-white"
+                >
+                  <Plus className="h-5 w-5" />
+                </button>
+              </div>
+              {/* Selected Custom Equipment */}
+              <div className="flex flex-wrap gap-2 mt-4">
+                {(form.equipment || []).map((item) => {
+                  if (COMMON_EQUIPMENT.includes(item)) return null; // Already shown above
+                  return (
+                    <span key={item} className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.08] px-3 py-1 text-xs font-semibold text-white">
+                      {item}
+                      <button
+                        type="button"
+                        onClick={() => handleChange("equipment", form.equipment.filter(e => e !== item))}
+                        className="rounded-full p-0.5 hover:bg-white/10 text-white/40 hover:text-white"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
@@ -275,7 +470,7 @@ export default function AdminVehicleForm({ vehicleId, onSave, onCancel }) {
                   />
                   <span className="text-xs font-bold uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">Mostrar Precio</span>
                 </label>
-                <label className="flex items-center gap-3 cursor-pointer group">
+                <label className="flex items-center gap-3 cursor-pointer group border-t border-white/5 pt-3">
                   <input
                     type="checkbox"
                     checked={form.ask_price}
@@ -283,6 +478,15 @@ export default function AdminVehicleForm({ vehicleId, onSave, onCancel }) {
                     className="h-5 w-5 rounded-lg border-white/10 bg-white/10 text-sport accent-sport"
                   />
                   <span className="text-xs font-bold uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">Botón "Consultar"</span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer group border-t border-white/5 pt-3">
+                  <input
+                    type="checkbox"
+                    checked={form.accepts_trade}
+                    onChange={(e) => handleChange("accepts_trade", e.target.checked)}
+                    className="h-5 w-5 rounded-lg border-white/10 bg-white/10 text-sport accent-sport"
+                  />
+                  <span className="text-xs font-bold uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">Acepta Permuta</span>
                 </label>
               </div>
 

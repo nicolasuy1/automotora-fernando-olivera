@@ -7,10 +7,13 @@ import {
   Fuel, 
   Gauge, 
   Info, 
-  MessageCircle, 
   ShieldCheck, 
   Zap,
-  Loader2
+  Loader2,
+  Palette,
+  DoorClosed,
+  CheckCircle2,
+  Compass
 } from "lucide-react";
 import Button from "../components/Button.jsx";
 import Footer from "../components/Footer.jsx";
@@ -19,6 +22,7 @@ import VehicleCard from "../components/VehicleCard.jsx";
 import { getVehicleBySlug, getRelatedVehicles } from "../services/vehicleService.js";
 import { handleInternalNavigation } from "../lib/navigation.js";
 import { vehicleWhatsappHref } from "../lib/whatsapp.js";
+import WhatsAppIcon from "../components/icons/WhatsAppIcon.jsx";
 
 export default function VehicleDetailPage({ slug }) {
   const [vehicle, setVehicle] = useState(null);
@@ -148,18 +152,32 @@ export default function VehicleDetailPage({ slug }) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 border-y border-white/5 py-8">
+              <div className="grid grid-cols-2 gap-4 border-y border-white/5 py-8 sm:grid-cols-3">
                 <Spec icon={Gauge} label="Kilometraje" value={vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km` : "N/A"} />
                 <Spec icon={Zap} label="Motor" value={vehicle.engine || "Consultar"} />
                 <Spec icon={Fuel} label="Combustible" value={vehicle.fuel} />
-                <Spec icon={Calendar} label="Año" value={vehicle.year} />
+                <Spec icon={Compass} label="Transmisión" value={vehicle.transmission || "Consultar"} />
+                <Spec icon={Palette} label="Color" value={vehicle.color || "Consultar"} />
+                <Spec icon={DoorClosed} label="Puertas" value={vehicle.doors ? `${vehicle.doors} puertas` : "Consultar"} />
               </div>
 
-              <div className="space-y-4">
+              {/* Accepts Trade (Permuta) Badge */}
+              {vehicle.accepts_trade && (
+                <div className="flex items-center gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-emerald-400">
+                  <CheckCircle2 className="h-5 w-5 shrink-0" />
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-widest leading-none">Acepta Permuta</p>
+                    <p className="text-[10px] text-emerald-400/70 mt-1 uppercase">Tomamos tu vehículo actual como parte de pago</p>
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-6">
                 <p className="text-lg leading-relaxed text-white/70">
                   {vehicle.long_description || vehicle.short_description}
                 </p>
                 
+                {/* Insignias / Highlights */}
                 {vehicle.highlights && vehicle.highlights.length > 0 && (
                   <div className="flex flex-wrap gap-2 pt-2">
                     {vehicle.highlights.map(h => (
@@ -170,13 +188,30 @@ export default function VehicleDetailPage({ slug }) {
                     ))}
                   </div>
                 )}
+
+                {/* Technical Equipment list */}
+                {vehicle.equipment && vehicle.equipment.length > 0 && (
+                  <div className="border-t border-white/5 pt-6">
+                    <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/40 mb-4">
+                      Equipamiento Detallado
+                    </h3>
+                    <div className="grid grid-cols-2 gap-y-3 gap-x-6">
+                      {vehicle.equipment.map((item) => (
+                        <div key={item} className="flex items-center gap-2.5 text-xs font-semibold text-white/80 uppercase tracking-wider">
+                          <span className="h-1.5 w-1.5 rounded-full bg-sport shrink-0" />
+                          {item}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
             <div className="mt-10 space-y-4">
               <Button 
                 href={vehicleWhatsappHref(vehicle)} 
-                icon={MessageCircle} 
+                icon={WhatsAppIcon} 
                 className="w-full py-5 text-base cta-pulse"
               >
                 Consultar por WhatsApp

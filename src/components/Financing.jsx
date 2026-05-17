@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
-import { Check, MessageCircle } from "lucide-react";
+import { Check } from "lucide-react";
 import Button from "./Button.jsx";
 import SectionReveal from "./SectionReveal.jsx";
 import { whatsappHref } from "../lib/whatsapp.js";
+import WhatsAppIcon from "./icons/WhatsAppIcon.jsx";
 
 const headline = "No tener todo el dinero hoy no tiene por qué frenarte.";
 const bullets = [
@@ -65,7 +66,7 @@ export default function Financing() {
           >
             <Button
               href={whatsappHref("Hola Fernando, quiero ver opciones de financiación.")}
-              icon={MessageCircle}
+              icon={WhatsAppIcon}
               className="w-full"
             >
               Consultar financiación

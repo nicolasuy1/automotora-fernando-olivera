@@ -14,9 +14,9 @@ export default function VehicleVisual({ type = "compact", name, note, image, ima
       {/* Background Decor Layer */}
       <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent z-0" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_48%,rgba(225,29,72,.12),transparent_28%)] z-0" />
-      
+
       {/* Main Image Layer */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 1.05 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8 }}

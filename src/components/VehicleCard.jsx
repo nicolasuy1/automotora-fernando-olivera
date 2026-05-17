@@ -1,9 +1,10 @@
 import { motion } from "framer-motion";
-import { Gauge, MessageCircle, ShieldCheck } from "lucide-react";
+import { Gauge, ShieldCheck } from "lucide-react";
 import { handleInternalNavigation } from "../lib/navigation.js";
 import { vehicleWhatsappHref } from "../lib/whatsapp.js";
 import TiltCard from "./TiltCard.jsx";
 import VehicleVisual from "./VehicleVisual.jsx";
+import WhatsAppIcon from "./icons/WhatsAppIcon.jsx";
 
 const item = {
   hidden: { opacity: 0, y: 34 },
@@ -100,7 +101,7 @@ export default function VehicleCard({ vehicle }) {
             className="premium-button mt-5 flex w-full items-center justify-center gap-2 rounded-full border border-sport bg-sport px-4 py-3 text-xs font-black uppercase tracking-[0.16em]"
           >
             <span className="relative z-10 flex items-center gap-2">
-              <MessageCircle className="h-4 w-4" />
+              <WhatsAppIcon className="h-4 w-4" />
               Consultar por WhatsApp
             </span>
           </a>

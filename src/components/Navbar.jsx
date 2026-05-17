@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
-import { Menu, MessageCircle, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { handleInternalNavigation } from "../lib/navigation.js";
 import { whatsappHref } from "../lib/whatsapp.js";
+import WhatsAppIcon from "./icons/WhatsAppIcon.jsx";
 
 const links = [
   { label: "Inicio", href: "/" },
@@ -69,7 +70,7 @@ export default function Navbar() {
           href={whatsappHref()}
           className="premium-button hidden items-center gap-2 rounded-full border border-sport bg-sport px-5 py-3 text-xs font-black uppercase tracking-[0.2em] text-white shadow-glow sm:flex"
         >
-          <MessageCircle className="h-4 w-4" />
+          <WhatsAppIcon className="h-4 w-4" />
           Consultar
         </a>
 
@@ -105,7 +106,7 @@ export default function Navbar() {
             href={whatsappHref()}
             className="premium-button mt-2 flex items-center justify-center gap-2 rounded-2xl border border-sport bg-sport px-5 py-4 text-xs font-black uppercase tracking-[0.2em] text-white shadow-glow"
           >
-            <MessageCircle className="h-4 w-4" />
+            <WhatsAppIcon className="h-4 w-4" />
             Consultar
           </a>
         </div>

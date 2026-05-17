@@ -1,9 +1,10 @@
-import { CheckCircle2, MessageCircle } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import Button from "../components/Button.jsx";
 import Financing from "../components/Financing.jsx";
 import Footer from "../components/Footer.jsx";
 import PageHero from "../components/PageHero.jsx";
 import { whatsappHref } from "../lib/whatsapp.js";
+import WhatsAppIcon from "../components/icons/WhatsAppIcon.jsx";
 
 export default function FinancingPage() {
   return (
@@ -13,7 +14,7 @@ export default function FinancingPage() {
         title="No tener todo el dinero ya no es el freno."
         text="Consultá opciones de financiación, entrega y permuta para encontrar una alternativa posible según tu situación."
       >
-        <Button href={whatsappHref("Hola Fernando, quiero consultar opciones de financiación y permuta.")} icon={MessageCircle}>
+        <Button href={whatsappHref("Hola Fernando, quiero consultar opciones de financiación y permuta.")} icon={WhatsAppIcon}>
           Ver opciones reales
         </Button>
       </PageHero>
