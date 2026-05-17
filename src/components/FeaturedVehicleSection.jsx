@@ -15,6 +15,7 @@ export default function FeaturedVehicleSection() {
   const [isJumping, setIsJumping] = useState(false);
   const [paused, setPaused] = useState(false);
   const [cardWidth, setCardWidth] = useState(500);
+  const interactTimeoutRef = useRef(null);
 
   // Measure card width dynamically based on viewport size to match CSS
   useEffect(() => {
@@ -58,7 +59,7 @@ export default function FeaturedVehicleSection() {
     }, 4500); // Pass a slide every 4.5 seconds
 
     return () => clearInterval(interval);
-  }, [featured, paused]);
+  }, [featured, paused, currentIndex]);
 
   const handleAnimationComplete = () => {
     const N = featured.length;
@@ -85,9 +86,24 @@ export default function FeaturedVehicleSection() {
     }
   }, [isJumping]);
 
+  // Clean up timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (interactTimeoutRef.current) clearTimeout(interactTimeoutRef.current);
+    };
+  }, []);
+
   const scroll = (direction) => {
     if (isJumping) return;
+    
+    // Temporarily pause auto-play for 10 seconds of user inactivity
     setPaused(true);
+    if (interactTimeoutRef.current) clearTimeout(interactTimeoutRef.current);
+    
+    interactTimeoutRef.current = setTimeout(() => {
+      setPaused(false);
+    }, 10000); // Resume auto-play after 10 seconds of inactivity
+
     if (direction === 'left') {
       setCurrentIndex((prev) => prev - 1);
     } else {
@@ -148,7 +164,7 @@ export default function FeaturedVehicleSection() {
         >
           <motion.div 
             animate={{ x: -currentIndex * (cardWidth + 24) }}
-            transition={isJumping ? { duration: 0 } : { type: "spring", stiffness: 140, damping: 22 }}
+            transition={isJumping ? { duration: 0 } : { type: "spring", stiffness: 70, damping: 20 }}
             onAnimationComplete={handleAnimationComplete}
             className="flex gap-6"
           >
