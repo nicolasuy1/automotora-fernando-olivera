@@ -13,7 +13,7 @@ export default function FeaturedVehicleSection() {
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isJumping, setIsJumping] = useState(false);
-  const [paused, setPaused] = useState(false);
+  const [isManual, setIsManual] = useState(false);
   const [cardWidth, setCardWidth] = useState(500);
   const interactTimeoutRef = useRef(null);
 
@@ -39,7 +39,7 @@ export default function FeaturedVehicleSection() {
       try {
         const data = await getFeaturedVehicles(10);
         setFeatured(data);
-        // Start in the middle copy to enable seamless backward & forward loops
+        // Start in the middle copy for seamless manual browsing boundaries
         setCurrentIndex(data.length);
       } catch (error) {
         console.error("Error loading featured vehicles:", error);
@@ -50,33 +50,29 @@ export default function FeaturedVehicleSection() {
     loadFeatured();
   }, []);
 
-  // Auto-play effect
+  // Clean up timeouts on unmount
   useEffect(() => {
-    if (featured.length === 0 || paused) return;
-    
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => prev + 1);
-    }, 4500); // Pass a slide every 4.5 seconds
-
-    return () => clearInterval(interval);
-  }, [featured, paused, currentIndex]);
+    return () => {
+      if (interactTimeoutRef.current) clearTimeout(interactTimeoutRef.current);
+    };
+  }, []);
 
   const handleAnimationComplete = () => {
+    // Only perform index wraps when the user is actively navigating manually
+    if (!isManual) return;
     const N = featured.length;
     if (N === 0) return;
 
     if (currentIndex >= 2 * N) {
-      // Reached the end of the middle copy, jump back to first copy seamlessly
       setIsJumping(true);
       setCurrentIndex(currentIndex - N);
     } else if (currentIndex < N) {
-      // Reached the beginning of the middle copy, jump forward to second copy seamlessly
       setIsJumping(true);
       setCurrentIndex(currentIndex + N);
     }
   };
 
-  // Reset jumping state on the next animation frame
+  // Reset jumping state on the next frame
   useEffect(() => {
     if (isJumping) {
       const raf = requestAnimationFrame(() => {
@@ -86,29 +82,29 @@ export default function FeaturedVehicleSection() {
     }
   }, [isJumping]);
 
-  // Clean up timeouts on unmount
-  useEffect(() => {
-    return () => {
-      if (interactTimeoutRef.current) clearTimeout(interactTimeoutRef.current);
-    };
-  }, []);
-
   const scroll = (direction) => {
     if (isJumping) return;
     
-    // Temporarily pause auto-play for 10 seconds of user inactivity
-    setPaused(true);
+    // Switch to active manual index mode and temporarily pause continuous marquee
+    if (!isManual) {
+      setIsManual(true);
+      const startIdx = featured.length;
+      const targetIdx = direction === 'left' ? startIdx - 1 : startIdx + 1;
+      setCurrentIndex(targetIdx);
+    } else {
+      if (direction === 'left') {
+        setCurrentIndex((prev) => prev - 1);
+      } else {
+        setCurrentIndex((prev) => prev + 1);
+      }
+    }
+
     if (interactTimeoutRef.current) clearTimeout(interactTimeoutRef.current);
     
+    // Auto-resume continuous sliding marquee after 10 seconds of user inactivity
     interactTimeoutRef.current = setTimeout(() => {
-      setPaused(false);
-    }, 10000); // Resume auto-play after 10 seconds of inactivity
-
-    if (direction === 'left') {
-      setCurrentIndex((prev) => prev - 1);
-    } else {
-      setCurrentIndex((prev) => prev + 1);
-    }
+      setIsManual(false);
+    }, 10000);
   };
 
   if (loading) {
@@ -121,7 +117,8 @@ export default function FeaturedVehicleSection() {
 
   if (featured.length === 0) return null;
 
-  // Triple the array to create identical boundary zones for seamless wrapping
+  const N = featured.length;
+  const step = cardWidth + 24; // Card width + gap-6
   const displayItems = [...featured, ...featured, ...featured];
 
   return (
@@ -155,16 +152,20 @@ export default function FeaturedVehicleSection() {
         </div>
 
         {/* Carousel Viewport */}
-        <div 
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-          onTouchStart={() => setPaused(true)}
-          onTouchEnd={() => setPaused(false)}
-          className="relative w-full overflow-hidden pb-12"
-        >
+        <div className="relative w-full overflow-hidden pb-12">
           <motion.div 
-            animate={{ x: -currentIndex * (cardWidth + 24) }}
-            transition={isJumping ? { duration: 0 } : { type: "spring", stiffness: 70, damping: 20 }}
+            animate={
+              isManual 
+                ? { x: -currentIndex * step } 
+                : { x: [-N * step, -2 * N * step] }
+            }
+            transition={
+              isManual 
+                ? isJumping 
+                  ? { duration: 0 } 
+                  : { type: "spring", stiffness: 150, damping: 25 }
+                : { ease: "linear", duration: N * 7.5, repeat: Infinity } // Continuous gentle automatic crawl (7.5s per card)
+            }
             onAnimationComplete={handleAnimationComplete}
             className="flex gap-6"
           >
