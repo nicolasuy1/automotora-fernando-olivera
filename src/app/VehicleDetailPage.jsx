@@ -23,6 +23,7 @@ import { getVehicleBySlug, getRelatedVehicles } from "../services/vehicleService
 import { handleInternalNavigation } from "../lib/navigation.js";
 import { vehicleWhatsappHref } from "../lib/whatsapp.js";
 import WhatsAppIcon from "../components/icons/WhatsAppIcon.jsx";
+import { formatVehicleTitle, formatCategory } from "../lib/formatters.js";
 
 export default function VehicleDetailPage({ slug }) {
   const [vehicle, setVehicle] = useState(null);
@@ -92,7 +93,7 @@ export default function VehicleDetailPage({ slug }) {
             <div className="relative aspect-[16/10] overflow-hidden rounded-3xl border border-white/10 bg-carbon shadow-2xl">
               <img
                 src={gallery[activeImage]}
-                alt={vehicle.title}
+                alt={formatVehicleTitle(vehicle.title)}
                 className="h-full w-full object-cover"
               />
               
@@ -137,10 +138,10 @@ export default function VehicleDetailPage({ slug }) {
             <div className="space-y-6">
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.3em] text-sport">
-                  {vehicle.category} · {vehicle.brand}
+                  {formatCategory(vehicle.category)} · {vehicle.brand}
                 </p>
                 <h1 className="mt-3 text-4xl font-black leading-none text-white sm:text-5xl lg:text-6xl">
-                  {vehicle.title}
+                  {formatVehicleTitle(vehicle.title)}
                 </h1>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <div className="rounded-full bg-sport px-4 py-2 text-sm font-black text-white shadow-glow">

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Car, Eye, Package, ShoppingCart, Star, TrendingUp, Loader2 } from "lucide-react";
 import { getDashboardStats } from "../../services/vehicleService.js";
+import { formatVehicleTitle, formatCategory } from "../../lib/formatters.js";
 
 const CATEGORY_METADATA = {
   automoviles: { label: "Automóviles", color: "#f43f5e", bg: "bg-rose-500" },
@@ -70,7 +71,7 @@ export default function AdminDashboard({ onNavigate }) {
     <div className="space-y-10">
       <div>
         <h1 className="text-3xl font-black text-white uppercase tracking-tighter">Panel General</h1>
-        <p className="text-white/40 text-xs uppercase tracking-widest mt-1">Estado actual del inventario</p>
+        <p className="text-white/40 text-xs uppercase tracking-widest mt-1">Estado actual del inventario de vehículos</p>
       </div>
 
       {/* Stats grid */}
@@ -201,14 +202,14 @@ export default function AdminDashboard({ onNavigate }) {
               <div className="h-14 w-20 shrink-0 overflow-hidden rounded-xl bg-carbon">
                 <img
                   src={vehicle.main_image_url || "/images/backgrounds/showroom-premium.jpeg"}
-                  alt={vehicle.title}
+                  alt={formatVehicleTitle(vehicle.title)}
                   className="h-full w-full object-cover"
                 />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-black text-white uppercase">{vehicle.title}</p>
+                <p className="truncate text-sm font-black text-white uppercase">{formatVehicleTitle(vehicle.title)}</p>
                 <p className="text-[10px] uppercase tracking-widest text-white/30 mt-1">
-                  {vehicle.brand} · {vehicle.year} · {vehicle.category}
+                  {vehicle.brand} · {vehicle.year} · {formatCategory(vehicle.category)}
                 </p>
               </div>
               <StatusBadge status={vehicle.status} />

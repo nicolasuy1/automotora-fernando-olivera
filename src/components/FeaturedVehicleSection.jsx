@@ -7,6 +7,7 @@ import VehicleVisual from "./VehicleVisual.jsx";
 import { getFeaturedVehicles } from "../services/vehicleService.js";
 import { handleInternalNavigation } from "../lib/navigation.js";
 import { vehicleWhatsappHref } from "../lib/whatsapp.js";
+import { formatVehicleTitle } from "../lib/formatters.js";
 
 export default function FeaturedVehicleSection() {
   const [featured, setFeatured] = useState([]);
@@ -183,7 +184,7 @@ export default function FeaturedVehicleSection() {
                   >
                     <VehicleVisual
                       type={vehicle.visual_type}
-                      name={vehicle.title}
+                      name={formatVehicleTitle(vehicle.title)}
                       image={vehicle.main_image_url}
                       imageAlt={vehicle.brand + " " + vehicle.model}
                       className="h-[300px] rounded-3xl"
@@ -196,7 +197,7 @@ export default function FeaturedVehicleSection() {
                         {vehicle.brand} · {vehicle.year}
                       </p>
                       <h3 className="mt-2 truncate text-2xl font-black text-white uppercase tracking-tight group-hover:text-sport transition-colors">
-                        {vehicle.title}
+                        {formatVehicleTitle(vehicle.title)}
                       </h3>
                       <div className="mt-4 flex flex-wrap gap-2">
                         <span className="rounded-full bg-white/5 px-3 py-1 text-[10px] font-bold text-white/60">

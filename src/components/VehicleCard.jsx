@@ -5,6 +5,7 @@ import { vehicleWhatsappHref } from "../lib/whatsapp.js";
 import TiltCard from "./TiltCard.jsx";
 import VehicleVisual from "./VehicleVisual.jsx";
 import WhatsAppIcon from "./icons/WhatsAppIcon.jsx";
+import { formatVehicleTitle, formatCategory } from "../lib/formatters.js";
 
 const item = {
   hidden: { opacity: 0, y: 34 },
@@ -61,9 +62,9 @@ export default function VehicleCard({ vehicle }) {
           )}
           <div className="absolute bottom-4 left-4 right-4 z-20">
             <p className="text-xs font-black uppercase tracking-[0.24em] text-white/[0.48]">
-              {vehicle.brand} / {vehicle.category || vehicle.type}
+              {vehicle.brand} / {formatCategory(vehicle.category || vehicle.type)}
             </p>
-            <h3 className="mt-2 text-2xl font-black leading-tight text-white">{vehicle.title}</h3>
+            <h3 className="mt-2 text-2xl font-black leading-tight text-white">{formatVehicleTitle(vehicle.title)}</h3>
             <p className="mt-2 line-clamp-2 text-sm font-semibold leading-6 text-white/[0.66]">{vehicle.short_description || vehicle.shortDescription}</p>
           </div>
         </div>

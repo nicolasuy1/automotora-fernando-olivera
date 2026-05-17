@@ -9,7 +9,7 @@ import {
   CheckCircle2, 
   Loader2, 
   Search,
-  Filter
+  Package
 } from "lucide-react";
 import { 
   getAllVehicles, 
@@ -19,6 +19,7 @@ import {
   togglePublished, 
   duplicateVehicle 
 } from "../../services/vehicleService.js";
+import { formatVehicleTitle, formatCategory } from "../../lib/formatters.js";
 
 export default function AdminVehicleList({ onEdit, onRefresh }) {
   const [vehicles, setVehicles] = useState([]);
@@ -42,29 +43,58 @@ export default function AdminVehicleList({ onEdit, onRefresh }) {
     }
   }
 
-  async function handleDelete(id) {
-    if (!confirm("¿Seguro que querés eliminar este vehículo? Esta acción no se puede deshacer.")) return;
+  async function handleDelete(vehicle) {
+    if (!confirm(`¿Seguro que querés borrar este vehículo? Esta acción no se puede deshacer.`)) return;
     try {
-      await deleteVehicle(id);
+      await deleteVehicle(vehicle.id);
       loadVehicles();
+      if (onRefresh) onRefresh();
     } catch (error) {
       alert("Error al eliminar.");
     }
   }
 
-  async function handleAction(actionFn, id) {
+  async function handleMarkAsSold(vehicle) {
+    if (vehicle.status !== "sold") {
+      if (!confirm("¿Querés marcar este vehículo como vendido? Dejará de mostrarse como disponible.")) return;
+    }
     try {
-      await actionFn(id);
+      await markAsSold(vehicle.id);
       loadVehicles();
+      if (onRefresh) onRefresh();
     } catch (error) {
-      alert("Error al realizar la acción.");
+      alert("Error al marcar como vendido.");
     }
   }
 
-  async function handleDuplicate(id) {
+  async function handleTogglePublished(vehicle) {
+    if (vehicle.status === "available") {
+      if (!confirm("¿Querés ocultar este vehículo del catálogo público? Podrás volver a publicarlo después.")) return;
+    }
     try {
-      await duplicateVehicle(id);
+      await togglePublished(vehicle.id);
       loadVehicles();
+      if (onRefresh) onRefresh();
+    } catch (error) {
+      alert("Error al cambiar la visibilidad.");
+    }
+  }
+
+  async function handleToggleFeatured(vehicle) {
+    try {
+      await toggleFeatured(vehicle.id);
+      loadVehicles();
+      if (onRefresh) onRefresh();
+    } catch (error) {
+      alert("Error al cambiar destacado.");
+    }
+  }
+
+  async function handleDuplicate(vehicle) {
+    try {
+      await duplicateVehicle(vehicle.id);
+      loadVehicles();
+      if (onRefresh) onRefresh();
     } catch (error) {
       alert("Error al duplicar.");
     }
@@ -89,13 +119,13 @@ export default function AdminVehicleList({ onEdit, onRefresh }) {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-black text-white uppercase tracking-tighter">Inventario</h1>
+          <h1 className="text-3xl font-black text-white uppercase tracking-tighter">Inventario de vehículos</h1>
           <p className="text-white/40 text-xs uppercase tracking-widest mt-1">
-            {filteredVehicles.length} unidades encontradas
+            {filteredVehicles.length} {filteredVehicles.length === 1 ? "unidad cargada" : "unidades cargadas"} en el sistema
           </p>
         </div>
 
-        <div className="flex flex-1 max-w-md gap-3">
+        <div className="flex flex-col xs:flex-row flex-1 max-w-md gap-3 w-full">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
             <input 
@@ -103,18 +133,18 @@ export default function AdminVehicleList({ onEdit, onRefresh }) {
               placeholder="Buscar por marca o modelo..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white outline-none focus:border-sport/50 transition-all"
+              className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white outline-none focus:border-sport/50 transition-all placeholder:text-white/20"
             />
           </div>
           <select 
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs font-bold text-white/70 outline-none focus:border-sport/50 transition-all"
+            className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs font-bold text-white/70 outline-none focus:border-sport/50 transition-all"
           >
-            <option value="all">Todos</option>
-            <option value="available">Disponibles</option>
-            <option value="sold">Vendidos</option>
-            <option value="reserved">Reservados</option>
+            <option value="all" className="bg-[#0a0a0c]">Todos</option>
+            <option value="available" className="bg-[#0a0a0c]">Disponibles</option>
+            <option value="sold" className="bg-[#0a0a0c]">Vendidos</option>
+            <option value="reserved" className="bg-[#0a0a0c]">Reservados</option>
           </select>
         </div>
       </div>
@@ -126,26 +156,32 @@ export default function AdminVehicleList({ onEdit, onRefresh }) {
             className="group relative flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5 rounded-3xl border border-white/10 bg-white/[0.02] p-4 transition-all hover:bg-white/[0.04] hover:border-white/20"
           >
             {/* Thumbnail - Much larger on mobile to identify the car */}
-            <div className="h-48 w-full sm:h-24 sm:w-36 shrink-0 overflow-hidden rounded-2xl bg-carbon">
+            <div className="h-48 w-full sm:h-24 sm:w-36 shrink-0 overflow-hidden rounded-2xl bg-carbon relative">
               <img 
                 src={vehicle.main_image_url || "/images/backgrounds/showroom-premium.jpeg"} 
                 alt={vehicle.title}
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
+              {/* Highlight indicator on mobile visual */}
+              {vehicle.featured && (
+                <div className="absolute top-2 left-2 sm:hidden rounded-full bg-[#0a0a0c]/80 p-1.5 backdrop-blur-md border border-champagne/30">
+                  <Star className="h-3.5 w-3.5 text-champagne fill-champagne" />
+                </div>
+              )}
             </div>
 
             {/* Info */}
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2 mb-2 sm:mb-1">
                 <h3 className="text-xl sm:text-lg font-black text-white uppercase tracking-tight leading-tight sm:truncate">
-                  {vehicle.title}
+                  {formatVehicleTitle(vehicle.title)}
                 </h3>
-                {vehicle.featured && <Star className="h-4 w-4 shrink-0 text-champagne fill-champagne" />}
+                {vehicle.featured && <Star className="hidden sm:block h-4 w-4 shrink-0 text-champagne fill-champagne" />}
               </div>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[10px] font-bold uppercase tracking-widest text-white/30">
                 <span className="bg-white/5 px-2 py-0.5 rounded-md">{vehicle.year}</span>
                 <span className="bg-white/5 px-2 py-0.5 rounded-md">{vehicle.brand}</span>
-                <span className="hidden sm:inline">{vehicle.category}</span>
+                <span className="bg-white/5 px-2 py-0.5 rounded-md text-white/50">{formatCategory(vehicle.category || vehicle.type)}</span>
                 <span className="text-white/60 font-black">USD {vehicle.price_usd?.toLocaleString() || "---"}</span>
               </div>
             </div>
@@ -159,42 +195,60 @@ export default function AdminVehicleList({ onEdit, onRefresh }) {
             <div className="flex flex-wrap items-center gap-2 border-t border-white/5 pt-4 sm:border-0 sm:pt-0">
               <ActionButton 
                 icon={Edit2} 
-                label="Editar" 
+                label="Editar vehículo" 
+                tooltipText="Editar vehículo"
+                ariaLabel="Editar vehículo"
                 onClick={() => onEdit(vehicle.id)} 
-                color="hover:text-blue-400"
+                colorStyles="bg-white/5 border-white/10 text-white/40 hover:bg-blue-500/10 hover:border-blue-500/30 hover:text-blue-400"
               />
               <ActionButton 
                 icon={CheckCircle2} 
-                label="Vendido" 
-                onClick={() => handleAction(markAsSold, vehicle.id)} 
-                color="hover:text-sport"
+                label="Marcar como vendido" 
+                tooltipText="Marcar como vendido"
+                ariaLabel="Marcar como vendido"
+                onClick={() => handleMarkAsSold(vehicle)} 
+                colorStyles={vehicle.status === "sold" 
+                  ? "bg-sport/20 border-sport/40 text-sport" 
+                  : "bg-white/5 border-white/10 text-white/40 hover:bg-sport/10 hover:border-sport/30 hover:text-sport"}
                 active={vehicle.status === "sold"}
               />
               <ActionButton 
                 icon={Star} 
-                label="Destacar" 
-                onClick={() => handleAction(toggleFeatured, vehicle.id)} 
-                color="hover:text-champagne"
+                label="Destacar en inicio" 
+                tooltipText={vehicle.featured ? "Quitar destacado" : "Destacar en inicio"}
+                ariaLabel="Destacar en inicio"
+                onClick={() => handleToggleFeatured(vehicle)} 
+                colorStyles={vehicle.featured
+                  ? "bg-champagne/20 border-champagne/40 text-champagne"
+                  : "bg-white/5 border-white/10 text-white/40 hover:bg-champagne/10 hover:border-champagne/30 hover:text-champagne"}
                 active={vehicle.featured}
               />
               <ActionButton 
                 icon={vehicle.status === "available" ? Eye : EyeOff} 
-                label={vehicle.status === "available" ? "Ocultar" : "Mostrar"} 
-                onClick={() => handleAction(togglePublished, vehicle.id)} 
-                color="hover:text-emerald-400"
+                label={vehicle.status === "available" ? "Ocultar del catálogo" : "Mostrar en catálogo"} 
+                tooltipText={vehicle.status === "available" ? "Ocultar del catálogo" : "Mostrar en catálogo"}
+                ariaLabel={vehicle.status === "available" ? "Ocultar del catálogo" : "Mostrar en catálogo"}
+                onClick={() => handleTogglePublished(vehicle)} 
+                colorStyles={vehicle.status !== "available"
+                  ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400"
+                  : "bg-white/5 border-white/10 text-white/40 hover:bg-emerald-500/10 hover:border-emerald-500/30 hover:text-emerald-400"}
               />
               <div className="w-px h-6 bg-white/10 mx-1 hidden sm:block" />
               <ActionButton 
                 icon={Copy} 
-                label="Duplicar" 
-                onClick={() => handleDuplicate(vehicle.id)} 
-                color="hover:text-white"
+                label="Duplicar vehículo" 
+                tooltipText="Duplicar vehículo"
+                ariaLabel="Duplicar vehículo"
+                onClick={() => handleDuplicate(vehicle)} 
+                colorStyles="bg-white/5 border-white/10 text-white/40 hover:bg-purple-500/10 hover:border-purple-500/30 hover:text-purple-400"
               />
               <ActionButton 
                 icon={Trash2} 
-                label="Borrar" 
-                onClick={() => handleDelete(vehicle.id)} 
-                color="hover:text-red-500"
+                label="Borrar vehículo" 
+                tooltipText="Borrar vehículo"
+                ariaLabel="Borrar vehículo"
+                onClick={() => handleDelete(vehicle)} 
+                colorStyles="bg-white/5 border-white/10 text-white/40 hover:bg-red-500/15 hover:border-red-500/30 hover:text-red-500"
               />
             </div>
           </div>
@@ -202,7 +256,7 @@ export default function AdminVehicleList({ onEdit, onRefresh }) {
 
         {filteredVehicles.length === 0 && (
           <div className="text-center py-20 rounded-3xl border border-dashed border-white/10 bg-white/[0.01]">
-            <Package className="mx-auto h-12 w-12 text-white/10 mb-4" />
+            <Package className="mx-auto h-12 w-12 text-white/10 mb-4 animate-pulse" />
             <p className="text-sm font-black uppercase tracking-widest text-white/20">No se encontraron unidades</p>
           </div>
         )}
@@ -233,14 +287,22 @@ function StatusBadge({ status }) {
   );
 }
 
-function ActionButton({ icon: Icon, label, onClick, color, active }) {
+function ActionButton({ icon: Icon, label, tooltipText, onClick, colorStyles, active, ariaLabel }) {
   return (
-    <button
-      onClick={onClick}
-      title={label}
-      className={`grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/5 transition-all duration-300 ${color} ${active ? 'bg-white/10 border-white/20 text-white' : 'text-white/40'}`}
-    >
-      <Icon className={`h-4 w-4 ${active ? 'fill-current' : ''}`} />
-    </button>
+    <div className="relative group/tooltip">
+      <button
+        onClick={onClick}
+        title={label}
+        aria-label={ariaLabel}
+        className={`grid h-10 w-10 place-items-center rounded-xl border transition-all duration-300 active:scale-95 ${colorStyles}`}
+      >
+        <Icon className={`h-4 w-4 ${active ? 'fill-current' : ''}`} />
+      </button>
+      
+      {/* Premium CSS Tooltip (Hover) */}
+      <span className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 rounded-lg border border-white/10 bg-black/90 px-2.5 py-1.5 text-[9px] font-black uppercase tracking-wider text-white opacity-0 transition-all duration-200 group-hover/tooltip:opacity-100 whitespace-nowrap shadow-xl scale-95 group-hover/tooltip:scale-100">
+        {tooltipText}
+      </span>
+    </div>
   );
 }

@@ -77,21 +77,22 @@ export default function AdminPage({ onLogout }) {
             })}
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex gap-2 shrink-0">
             <button
               onClick={() => navigateTo("vehicle-form", null)}
-              className="flex shrink-0 items-center gap-2 rounded-lg border border-sport bg-sport px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white shadow-glow transition hover:brightness-110 sm:text-xs sm:tracking-[0.14em]"
+              className="flex shrink-0 items-center gap-1.5 rounded-lg border border-sport bg-sport px-2.5 py-2 text-[9px] font-black uppercase tracking-[0.08em] text-white shadow-glow transition hover:brightness-110 sm:gap-2 sm:px-3.5 sm:text-xs sm:tracking-[0.14em] whitespace-nowrap"
             >
-              <Plus className="h-4 w-4" />
-              <span className="hidden xs:inline">Nuevo</span>
-              <span className="hidden sm:inline">vehículo</span>
+              <Plus className="h-3.5 w-3.5 shrink-0" />
+              <span>Nuevo vehículo</span>
             </button>
             <button
               onClick={handleLogout}
-              className="flex shrink-0 items-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white/70 transition hover:bg-white/[0.08] hover:text-white sm:text-xs sm:tracking-[0.14em]"
+              className="flex shrink-0 items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-2 text-[9px] font-black uppercase tracking-[0.08em] text-white/70 transition hover:bg-white/[0.08] hover:text-white sm:gap-2 sm:px-3 sm:text-xs sm:tracking-[0.14em] whitespace-nowrap"
+              title="Cerrar sesión"
+              aria-label="Cerrar sesión"
             >
-              <LogOut className="h-4 w-4" />
-              <span className="hidden xs:inline">Salir</span>
+              <LogOut className="h-3.5 w-3.5 shrink-0" />
+              <span className="hidden md:inline">Cerrar sesión</span>
             </button>
           </div>
         </div>
