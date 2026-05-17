@@ -59,11 +59,11 @@ export default function SmartFloatingCTA() {
     <motion.a
       href={active.href}
       onClick={(event) => handleInternalNavigation(event, active.href)}
-      initial={{ opacity: 0, y: 18, scale: 0.96 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
+      initial={{ opacity: 0, x: "-50%", y: 18, scale: 0.96 }}
+      animate={{ opacity: 1, x: "-50%", y: 0, scale: 1 }}
       transition={{ delay: 0.7, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-      whileHover={{ scale: 1.04 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ scale: 1.04, x: "-50%" }}
+      whileTap={{ scale: 0.98, x: "-50%" }}
       className="cta-pulse premium-button fixed bottom-6 left-1/2 z-[100] flex min-h-12 w-[90%] max-w-xs -translate-x-1/2 items-center justify-center gap-2 rounded-full border border-sport bg-sport px-6 text-xs font-black uppercase tracking-[0.14em] text-white shadow-glow sm:bottom-8 sm:max-w-[16rem] sm:px-8"
     >
       <span className="relative z-10 flex items-center gap-3">
