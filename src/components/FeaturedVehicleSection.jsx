@@ -12,6 +12,7 @@ export default function FeaturedVehicleSection() {
   const [featured, setFeatured] = useState([]);
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef(null);
+  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     async function loadFeatured() {
@@ -34,34 +35,39 @@ export default function FeaturedVehicleSection() {
 
   // Auto-play effect
   useEffect(() => {
-    if (featured.length === 0) return;
+    if (featured.length === 0 || paused) return;
     
     const interval = setInterval(() => {
       scroll('right');
     }, 4500); // Pass a slide every 4.5 seconds
 
     return () => clearInterval(interval);
-  }, [featured]);
+  }, [featured, paused]);
 
   const scroll = (direction) => {
     if (scrollRef.current) {
       const { scrollLeft, clientWidth, scrollWidth } = scrollRef.current;
-      const itemWidth = clientWidth * 0.85; // Roughly the width of one card on mobile
+      const firstCard = scrollRef.current.firstElementChild;
+      const cardWidth = firstCard ? firstCard.getBoundingClientRect().width : clientWidth;
+      const gap = 24; // gap-6 in Tailwind is 24px
+      const step = cardWidth + gap;
       
+      const halfWidth = scrollWidth / 2;
       let newScrollLeft;
+      
       if (direction === 'left') {
-        newScrollLeft = scrollLeft - clientWidth;
+        newScrollLeft = scrollLeft - step;
         if (newScrollLeft < 0) {
-          // Jump to the end of the first set
-          scrollRef.current.scrollLeft = scrollWidth / 2;
-          newScrollLeft = (scrollWidth / 2) - clientWidth;
+          // Seamlessly jump to the equivalent position in the second half
+          scrollRef.current.scrollLeft = scrollLeft + halfWidth;
+          newScrollLeft = scrollLeft + halfWidth - step;
         }
       } else {
-        newScrollLeft = scrollLeft + clientWidth;
-        if (newScrollLeft + clientWidth > scrollWidth) {
-          // Jump to the start
-          scrollRef.current.scrollLeft = 0;
-          newScrollLeft = clientWidth;
+        newScrollLeft = scrollLeft + step;
+        if (scrollLeft >= halfWidth - 10) {
+          // Seamlessly jump to the equivalent position in the first half
+          scrollRef.current.scrollLeft = scrollLeft - halfWidth;
+          newScrollLeft = scrollLeft - halfWidth + step;
         }
       }
       
@@ -95,13 +101,19 @@ export default function FeaturedVehicleSection() {
           
           <div className="flex gap-3">
             <button
-              onClick={() => scroll('left')}
+              onClick={() => {
+                setPaused(true);
+                scroll('left');
+              }}
               className="grid h-12 w-12 place-items-center rounded-full border border-white/10 bg-white/5 text-white/40 transition hover:border-sport hover:text-white active:scale-95"
             >
               <ChevronLeft className="h-6 w-6" />
             </button>
             <button
-              onClick={() => scroll('right')}
+              onClick={() => {
+                setPaused(true);
+                scroll('right');
+              }}
               className="grid h-12 w-12 place-items-center rounded-full border border-white/10 bg-white/5 text-white/40 transition hover:border-sport hover:text-white active:scale-95"
             >
               <ChevronRight className="h-6 w-6" />
@@ -112,6 +124,10 @@ export default function FeaturedVehicleSection() {
         {/* Carousel Container */}
         <div 
           ref={scrollRef}
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onTouchStart={() => setPaused(true)}
+          onTouchEnd={() => setPaused(false)}
           className="flex gap-6 overflow-x-auto pb-12 no-scrollbar scroll-smooth"
           style={{ scrollSnapType: 'x mandatory' }}
         >

@@ -550,12 +550,12 @@ export default function AdminVehicleForm({ vehicleId, onSave, onCancel }) {
 }
 
 const INPUT_CLASS =
-  "w-full rounded-xl border border-white/10 bg-[#1a1a1c] px-4 py-3.5 text-sm text-white placeholder:text-white/20 outline-none transition focus:border-sport/50 focus:ring-1 focus:ring-sport/20 backdrop-blur-md appearance-none [&>option]:bg-[#1a1a1c] [&>option]:text-white";
+  "w-full rounded-xl border border-white/20 bg-[#1f1f23] px-4 py-3.5 text-sm text-white placeholder:text-white/45 outline-none transition focus:border-sport/50 focus:ring-1 focus:ring-sport/20 backdrop-blur-md appearance-none [&>option]:bg-[#1f1f23] [&>option]:text-white";
 
 function Field({ label, children }) {
   return (
     <div>
-      <label className="mb-2 block text-[10px] font-black uppercase tracking-[0.2em] text-white/30 px-1">
+      <label className="mb-2 block text-[10px] font-black uppercase tracking-[0.2em] text-white/65 px-1">
         {label}
       </label>
       {children}
