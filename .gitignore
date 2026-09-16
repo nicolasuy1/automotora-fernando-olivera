@@ -31,3 +31,4 @@ npm-debug.log*
 output/
 prompts/
 .vercel
+dist-gh
