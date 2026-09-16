@@ -14,11 +14,22 @@ const ContactPage = lazy(() => import("./app/ContactPage.jsx"));
 const AdminPage = lazy(() => import("./app/AdminPage.jsx"));
 const AdminLoginPage = lazy(() => import("./app/AdminLoginPage.jsx"));
 
+// Normaliza la ruta contra el subdirectorio donde esta desplegada la app
+// (en GitHub Pages el sitio vive en /<repo>/, no en la raiz del dominio).
+function stripBase(rawPath) {
+  const base = (import.meta.env.BASE_URL || "/").replace(/\/$/, "");
+  let path = rawPath;
+  if (base && path.startsWith(base)) {
+    path = path.slice(base.length);
+  }
+  return path === "" ? "/" : path;
+}
+
 function usePathname() {
-  const [pathname, setPathname] = useState(window.location.pathname);
+  const [pathname, setPathname] = useState(() => stripBase(window.location.pathname));
 
   useEffect(() => {
-    const updatePathname = () => setPathname(window.location.pathname);
+    const updatePathname = () => setPathname(stripBase(window.location.pathname));
     window.addEventListener("popstate", updatePathname);
     return () => window.removeEventListener("popstate", updatePathname);
   }, []);
